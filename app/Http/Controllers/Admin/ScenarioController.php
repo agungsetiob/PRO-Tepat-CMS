@@ -20,8 +20,7 @@ class ScenarioController extends Controller
 {
     public function index()
     {
-        // Ambil skenario beserta nama kategori dan tag terkait
-        $scenarios = Scenario::with(['category', 'tags'])->orderBy('order')->get();
+        $scenarios = Scenario::with(['category', 'tags'])->orderBy('order')->paginate(10);
         $categories = Category::orderBy('order')->get();
 
         return Inertia::render('Admin/Scenarios/Index', [
@@ -40,13 +39,12 @@ class ScenarioController extends Controller
             'jenis_acara' => 'nullable|in:kenegaraan,resmi,lainnya',
             'order' => 'required|integer',
             'is_active' => 'required|boolean',
-            'thumbnail' => 'nullable|image|max:2048', // Maksimal 2MB
+            'thumbnail' => 'nullable|image|max:2048',
             'tags' => 'nullable|string', // Diinput dipisah koma: "mobil, wabup, bupati"
         ]);
 
         $validated['slug'] = Str::slug($validated['title']) . '-' . rand(100, 999);
 
-        // Handle upload thumbnail jika ada
         if ($request->hasFile('thumbnail')) {
             $path = $request->file('thumbnail')->store('thumbnails', 'public');
             $validated['thumbnail'] = Storage::url($path);
@@ -92,13 +90,14 @@ class ScenarioController extends Controller
         $validated['slug'] = Str::slug($validated['title']) . '-' . $scenario->id;
 
         if ($request->hasFile('thumbnail')) {
-            // Hapus berkas lama jika ada
             if ($scenario->thumbnail) {
                 $oldPath = str_replace('/storage/', '', $scenario->thumbnail);
                 Storage::disk('public')->delete($oldPath);
             }
             $path = $request->file('thumbnail')->store('thumbnails', 'public');
             $validated['thumbnail'] = Storage::url($path);
+        } else {
+            unset($validated['thumbnail']);
         }
 
         $scenario->update($validated);

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AdminLayout from "@/Layouts/AdminLayout";
-import { Head, useForm, Link } from "@inertiajs/react";
+import { Head, useForm, Link, router } from "@inertiajs/react";
 import { 
   Plus, 
   Edit, 
@@ -17,6 +17,7 @@ import {
   Calendar,
   Search,
   ChevronRight,
+  ChevronLeft,
   AlertTriangle,
   Upload,
   Layers
@@ -129,6 +130,13 @@ export default function Index({ scenarios, categories }) {
         }
     };
 
+    const handlePageChange = (page) => {
+        router.get(route('admin.scenarios.index', { page: page }), {}, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
     const getStatusBadge = (isActive) => {
         return isActive ? (
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-green-50 text-green-700 border border-green-200">
@@ -159,6 +167,13 @@ export default function Index({ scenarios, categories }) {
         );
     };
 
+    // Get paginated data
+    const paginatedData = scenarios;
+    const currentPageData = paginatedData.data || [];
+    const totalItems = paginatedData.total || 0;
+    const activeScenarios = paginatedData.data?.filter(s => s.is_active).length || 0;
+    const totalTags = paginatedData.data?.reduce((acc, s) => acc + (s.tags?.length || 0), 0) || 0;
+
     return (
         <AdminLayout header="Manajemen Skenario Konten Protokol">
             <Head title="Skenario Utama" />
@@ -169,7 +184,7 @@ export default function Index({ scenarios, categories }) {
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-teal-100 text-sm font-medium mb-1">Total Skenario</p>
-                            <p className="text-3xl font-bold">{scenarios.length}</p>
+                            <p className="text-3xl font-bold">{totalItems}</p>
                         </div>
                         <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
                             <Layers size={24} className="text-white" />
@@ -199,14 +214,14 @@ export default function Index({ scenarios, categories }) {
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-purple-100 text-sm font-medium mb-1">Skenario Aktif</p>
-                            <p className="text-3xl font-bold">{scenarios.filter(s => s.is_active).length}</p>
+                            <p className="text-3xl font-bold">{activeScenarios}</p>
                         </div>
                         <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
                             <Eye size={24} className="text-white" />
                         </div>
                     </div>
                     <div className="mt-3 text-purple-100 text-xs">
-                        Tampil di aplikasi mobile
+                        Tampil di aplikasi mobile (halaman ini)
                     </div>
                 </div>
 
@@ -214,16 +229,14 @@ export default function Index({ scenarios, categories }) {
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-amber-100 text-sm font-medium mb-1">Total Tags</p>
-                            <p className="text-3xl font-bold">
-                                {scenarios.reduce((acc, s) => acc + (s.tags?.length || 0), 0)}
-                            </p>
+                            <p className="text-3xl font-bold">{totalTags}</p>
                         </div>
                         <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
                             <Tag size={24} className="text-white" />
                         </div>
                     </div>
                     <div className="mt-3 text-amber-100 text-xs">
-                        Kata kunci pencarian
+                        Kata kunci pencarian (halaman ini)
                     </div>
                 </div>
             </div>
@@ -259,10 +272,10 @@ export default function Index({ scenarios, categories }) {
                                 <th className="py-4 px-6">Tags</th>
                                 <th className="py-4 px-6 text-center w-24">Status</th>
                                 <th className="py-4 px-6 text-center w-44">Aksi</th>
-                              </tr>
+                            </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {scenarios.length === 0 ? (
+                            {currentPageData.length === 0 ? (
                                 <tr>
                                     <td colSpan="6" className="text-center py-12">
                                         <div className="flex flex-col items-center gap-3">
@@ -279,7 +292,7 @@ export default function Index({ scenarios, categories }) {
                                     </td>
                                 </tr>
                             ) : (
-                                scenarios.map((item) => (
+                                currentPageData.map((item) => (
                                     <tr key={item.id} className="group hover:bg-gradient-to-r hover:from-slate-50 hover:to-transparent transition-all duration-200">
                                         <td className="py-4 px-6">
                                             {item.thumbnail ? (
@@ -374,9 +387,126 @@ export default function Index({ scenarios, categories }) {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination Component */}
+                {paginatedData.last_page > 1 && (
+                    <div className="px-6 py-4 border-t border-slate-200 bg-slate-50">
+                        <div className="flex items-center justify-between flex-wrap gap-4">
+                            <div className="text-sm text-slate-600">
+                                Menampilkan <span className="font-semibold text-slate-800">{paginatedData.from || 0}</span> - <span className="font-semibold text-slate-800">{paginatedData.to || 0}</span> dari <span className="font-semibold text-slate-800">{paginatedData.total}</span> skenario
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                                {/* Previous Button */}
+                                <button
+                                    onClick={() => handlePageChange(paginatedData.current_page - 1)}
+                                    disabled={paginatedData.current_page === 1}
+                                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                        paginatedData.current_page === 1
+                                            ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                            : 'bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300'
+                                    }`}
+                                >
+                                    <ChevronLeft size={16} />
+                                    Sebelumnya
+                                </button>
+
+                                {/* Page Numbers */}
+                                <div className="flex items-center gap-1">
+                                    {(() => {
+                                        const pages = [];
+                                        const current = paginatedData.current_page;
+                                        const last = paginatedData.last_page;
+                                        
+                                        let startPage = Math.max(1, current - 2);
+                                        let endPage = Math.min(last, current + 2);
+                                        
+                                        if (endPage - startPage < 4) {
+                                            if (startPage === 1) {
+                                                endPage = Math.min(last, startPage + 4);
+                                            } else if (endPage === last) {
+                                                startPage = Math.max(1, endPage - 4);
+                                            }
+                                        }
+                                        
+                                        if (startPage > 1) {
+                                            pages.push(
+                                                <button
+                                                    key={1}
+                                                    onClick={() => handlePageChange(1)}
+                                                    className="w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300"
+                                                >
+                                                    1
+                                                </button>
+                                            );
+                                            if (startPage > 2) {
+                                                pages.push(
+                                                    <span key="dots1" className="w-9 h-9 flex items-center justify-center text-slate-400">
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                        }
+                                        
+                                        for (let i = startPage; i <= endPage; i++) {
+                                            pages.push(
+                                                <button
+                                                    key={i}
+                                                    onClick={() => handlePageChange(i)}
+                                                    className={`w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                                        i === paginatedData.current_page
+                                                            ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md'
+                                                            : 'bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300'
+                                                    }`}
+                                                >
+                                                    {i}
+                                                </button>
+                                            );
+                                        }
+                                        
+                                        if (endPage < last) {
+                                            if (endPage < last - 1) {
+                                                pages.push(
+                                                    <span key="dots2" className="w-9 h-9 flex items-center justify-center text-slate-400">
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                            pages.push(
+                                                <button
+                                                    key={last}
+                                                    onClick={() => handlePageChange(last)}
+                                                    className="w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300"
+                                                >
+                                                    {last}
+                                                </button>
+                                            );
+                                        }
+                                        
+                                        return pages;
+                                    })()}
+                                </div>
+
+                                {/* Next Button */}
+                                <button
+                                    onClick={() => handlePageChange(paginatedData.current_page + 1)}
+                                    disabled={paginatedData.current_page === paginatedData.last_page}
+                                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                        paginatedData.current_page === paginatedData.last_page
+                                            ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                            : 'bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300'
+                                    }`}
+                                >
+                                    Selanjutnya
+                                    <ChevronRight size={16} />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
-            {/* Modal Form Create/Edit */}
+            {/* Modal Form Create/Edit - Keep the same as original */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
                     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all duration-300 scale-100">
@@ -661,7 +791,7 @@ export default function Index({ scenarios, categories }) {
                 </div>
             )}
 
-            {/* Modal Konfirmasi Hapus */}
+            {/* Modal Konfirmasi Hapus - Keep the same as original */}
             {isDeleteModalOpen && selectedScenario && (
                 <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
                     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all duration-300 scale-100">

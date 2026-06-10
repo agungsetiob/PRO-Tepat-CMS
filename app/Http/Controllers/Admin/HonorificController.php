@@ -11,8 +11,10 @@ class HonorificController extends Controller
 {
     public function index()
     {
-        $honorifics = Honorific::urutanProtokol()->get();
-        
+        $honorifics = Honorific::urutanProtokol()
+            ->paginate(10)
+            ->withQueryString();
+
         return Inertia::render('Admin/Honorifics/Index', [
             'honorifics' => $honorifics
         ]);

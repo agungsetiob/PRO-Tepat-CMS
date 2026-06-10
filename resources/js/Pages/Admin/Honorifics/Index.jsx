@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, useForm, router } from '@inertiajs/react';
 import { 
   Plus, 
   Edit, 
@@ -16,7 +16,9 @@ import {
   Mic,
   FileText,
   AlertTriangle,
-  Shield
+  Shield,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 export default function Index({ honorifics }) {
@@ -82,6 +84,13 @@ export default function Index({ honorifics }) {
         }
     };
 
+    const handlePageChange = (page) => {
+        router.get(route('admin.honorifics.index', { page: page }), {}, {
+            preserveState: true,
+            preserveScroll: true,
+        });
+    };
+
     const getTingkatBadge = (tingkat) => {
         const colors = [
             'from-amber-500 to-amber-600',
@@ -101,20 +110,23 @@ export default function Index({ honorifics }) {
         );
     };
 
-    // Urutkan berdasarkan tingkat
-    const sortedHonorifics = [...honorifics].sort((a, b) => a.tingkat - b.tingkat);
+    // Data is now from paginated response
+    const paginatedData = honorifics;
+    const currentPageData = paginatedData.data || [];
+    
+    const totalItems = paginatedData.total || 0;
 
     return (
         <AdminLayout header="Manajemen Master Jabatan & Sapaan">
             <Head title="Master Jabatan" />
 
-            {/* Stats Cards */}
+            {/* Stats Cards - Update with actual total from pagination */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-5 text-white transform hover:scale-105 transition-transform duration-300">
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-purple-100 text-sm font-medium mb-1">Total Jabatan</p>
-                            <p className="text-3xl font-bold">{honorifics.length}</p>
+                            <p className="text-3xl font-bold">{totalItems}</p>
                         </div>
                         <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
                             <Crown size={24} className="text-white" />
@@ -130,7 +142,7 @@ export default function Index({ honorifics }) {
                         <div>
                             <p className="text-emerald-100 text-sm font-medium mb-1">Tertinggi</p>
                             <p className="text-2xl font-bold truncate">
-                                {sortedHonorifics[0]?.jabatan.split(' ').slice(0, 2).join(' ') || '-'}
+                                {currentPageData[0]?.jabatan.split(' ').slice(0, 2).join(' ') || '-'}
                             </p>
                         </div>
                         <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
@@ -138,7 +150,7 @@ export default function Index({ honorifics }) {
                         </div>
                     </div>
                     <div className="mt-3 text-emerald-100 text-xs">
-                        Tingkat {sortedHonorifics[0]?.tingkat || 0} - Prioritas tertinggi
+                        Tingkat {currentPageData[0]?.tingkat || 0} - Prioritas tertinggi
                     </div>
                 </div>
 
@@ -147,7 +159,9 @@ export default function Index({ honorifics }) {
                         <div>
                             <p className="text-blue-100 text-sm font-medium mb-1">Rata-rata Sapaan</p>
                             <p className="text-3xl font-bold">
-                                {Math.round(honorifics.reduce((acc, h) => acc + (h.sapaan_lisan ? 1 : 0), 0) / honorifics.length * 100)}%
+                                {totalItems > 0 
+                                    ? Math.round(currentPageData.reduce((acc, h) => acc + (h.sapaan_lisan ? 1 : 0), 0) / currentPageData.length * 100) 
+                                    : 0}%
                             </p>
                         </div>
                         <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
@@ -155,7 +169,7 @@ export default function Index({ honorifics }) {
                         </div>
                     </div>
                     <div className="mt-3 text-blue-100 text-xs">
-                        Kelengkapan sapaan lisan
+                        Kelengkapan sapaan lisan (halaman ini)
                     </div>
                 </div>
             </div>
@@ -214,10 +228,10 @@ export default function Index({ honorifics }) {
                                         Aksi
                                     </div>
                                 </th>
-                             </tr>
+                            </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {sortedHonorifics.length === 0 ? (
+                            {currentPageData.length === 0 ? (
                                 <tr>
                                     <td colSpan="5" className="text-center py-12">
                                         <div className="flex flex-col items-center gap-3">
@@ -234,7 +248,7 @@ export default function Index({ honorifics }) {
                                     </td>
                                 </tr>
                             ) : (
-                                sortedHonorifics.map((item, index) => (
+                                currentPageData.map((item) => (
                                     <tr key={item.id} className="group hover:bg-gradient-to-r hover:from-slate-50 hover:to-transparent transition-all duration-200">
                                         <td className="py-4 px-6 text-center">
                                             {getTingkatBadge(item.tingkat)}
@@ -302,6 +316,123 @@ export default function Index({ honorifics }) {
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination Component */}
+                {paginatedData.last_page > 1 && (
+                    <div className="px-6 py-4 border-t border-slate-200 bg-slate-50">
+                        <div className="flex items-center justify-between flex-wrap gap-4">
+                            <div className="text-sm text-slate-600">
+                                Menampilkan <span className="font-semibold text-slate-800">{paginatedData.from || 0}</span> - <span className="font-semibold text-slate-800">{paginatedData.to || 0}</span> dari <span className="font-semibold text-slate-800">{paginatedData.total}</span> data
+                            </div>
+                            
+                            <div className="flex items-center gap-2">
+                                {/* Previous Button */}
+                                <button
+                                    onClick={() => handlePageChange(paginatedData.current_page - 1)}
+                                    disabled={paginatedData.current_page === 1}
+                                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                        paginatedData.current_page === 1
+                                            ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                            : 'bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300'
+                                    }`}
+                                >
+                                    <ChevronLeft size={16} />
+                                    Sebelumnya
+                                </button>
+
+                                {/* Page Numbers */}
+                                <div className="flex items-center gap-1">
+                                    {(() => {
+                                        const pages = [];
+                                        const current = paginatedData.current_page;
+                                        const last = paginatedData.last_page;
+                                        
+                                        let startPage = Math.max(1, current - 2);
+                                        let endPage = Math.min(last, current + 2);
+                                        
+                                        if (endPage - startPage < 4) {
+                                            if (startPage === 1) {
+                                                endPage = Math.min(last, startPage + 4);
+                                            } else if (endPage === last) {
+                                                startPage = Math.max(1, endPage - 4);
+                                            }
+                                        }
+                                        
+                                        if (startPage > 1) {
+                                            pages.push(
+                                                <button
+                                                    key={1}
+                                                    onClick={() => handlePageChange(1)}
+                                                    className="w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300"
+                                                >
+                                                    1
+                                                </button>
+                                            );
+                                            if (startPage > 2) {
+                                                pages.push(
+                                                    <span key="dots1" className="w-9 h-9 flex items-center justify-center text-slate-400">
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                        }
+                                        
+                                        for (let i = startPage; i <= endPage; i++) {
+                                            pages.push(
+                                                <button
+                                                    key={i}
+                                                    onClick={() => handlePageChange(i)}
+                                                    className={`w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                                        i === paginatedData.current_page
+                                                            ? 'bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md'
+                                                            : 'bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300'
+                                                    }`}
+                                                >
+                                                    {i}
+                                                </button>
+                                            );
+                                        }
+                                        
+                                        if (endPage < last) {
+                                            if (endPage < last - 1) {
+                                                pages.push(
+                                                    <span key="dots2" className="w-9 h-9 flex items-center justify-center text-slate-400">
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                            pages.push(
+                                                <button
+                                                    key={last}
+                                                    onClick={() => handlePageChange(last)}
+                                                    className="w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300"
+                                                >
+                                                    {last}
+                                                </button>
+                                            );
+                                        }
+                                        
+                                        return pages;
+                                    })()}
+                                </div>
+
+                                {/* Next Button */}
+                                <button
+                                    onClick={() => handlePageChange(paginatedData.current_page + 1)}
+                                    disabled={paginatedData.current_page === paginatedData.last_page}
+                                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                        paginatedData.current_page === paginatedData.last_page
+                                            ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                            : 'bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300'
+                                    }`}
+                                >
+                                    Selanjutnya
+                                    <ChevronRight size={16} />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Modal Form Create/Edit */}
