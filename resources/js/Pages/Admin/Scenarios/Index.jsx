@@ -565,7 +565,7 @@ export default function Index({ scenarios, categories }) {
                                         Sifat Jenis Acara
                                     </label>
                                     <div className="grid grid-cols-3 gap-2">
-                                        {['resmi', 'kenegaraan', 'lainnya'].map((jenis) => (
+                                        {['resmi', 'kenegaraan', 'incognito'].map((jenis) => (
                                             <label
                                                 key={jenis}
                                                 className={`cursor-pointer p-2 rounded-lg border-2 transition-all duration-200 text-center ${

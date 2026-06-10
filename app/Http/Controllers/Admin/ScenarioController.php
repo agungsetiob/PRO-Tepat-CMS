@@ -36,7 +36,7 @@ class ScenarioController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'layout_type' => 'nullable|string|max:255',
-            'jenis_acara' => 'nullable|in:kenegaraan,resmi,lainnya',
+            'jenis_acara' => 'nullable|in:kenegaraan,resmi,incognito',
             'order' => 'required|integer',
             'is_active' => 'required|boolean',
             'thumbnail' => 'nullable|image|max:2048',
