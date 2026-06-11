@@ -625,7 +625,7 @@ export default function Dashboard({
                             </div>
                         </div>
                         <div className="mt-4 pt-3 border-t border-white/20 text-xs text-teal-100">
-                            Protokol Tanah Bumbu v1.0
+                            PRO-Tepat Tanah Bumbu v1.0
                         </div>
                     </div>
                 </div>
