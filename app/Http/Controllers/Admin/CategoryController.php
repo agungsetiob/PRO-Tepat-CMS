@@ -13,7 +13,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::orderBy('order')->get();
-        
+
         return Inertia::render('Admin/Categories/Index', [
             'categories' => $categories
         ]);
@@ -54,12 +54,18 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
-        // Fitur safety agar tidak sengaja menghapus kategori yang masih punya skenario
         if ($category->scenarios()->count() > 0) {
-            return redirect()->back()->withErrors(['error' => 'Kategori tidak bisa dihapus karena masih memiliki data skenario di dalamnya.']);
+            return redirect()->back()->with(
+                'error',
+                'Kategori tidak bisa dihapus karena masih memiliki data skenario di dalamnya.'
+            );
         }
 
         $category->delete();
-        return redirect()->back()->with('message', 'Kategori berhasil dihapus.');
+
+        return redirect()->back()->with(
+            'message',
+            'Kategori berhasil dihapus.'
+        );
     }
 }

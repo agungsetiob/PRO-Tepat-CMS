@@ -1,33 +1,42 @@
-import React, { useState } from 'react';
-import AdminLayout from '@/Layouts/AdminLayout';
-import { Head, useForm, usePage } from '@inertiajs/react';
-import { 
-  Plus, 
-  Edit, 
-  Trash2, 
-  X, 
-  CheckCircle, 
-  AlertCircle,
-  FolderTree,
-  Grid3x3,
-  Hash,
-  Tag,
-  Type,
-  AlertTriangle
-} from 'lucide-react';
+import React, { useState } from "react";
+import AdminLayout from "@/Layouts/AdminLayout";
+import { Head, useForm, usePage } from "@inertiajs/react";
+import {
+    Plus,
+    Edit,
+    Trash2,
+    X,
+    CheckCircle,
+    AlertCircle,
+    FolderTree,
+    Grid3x3,
+    Hash,
+    Tag,
+    Type,
+    AlertTriangle,
+} from "lucide-react";
 
 export default function Index({ categories }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [editMode, setEditMode] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
-    const { errors: flashErrors } = usePage().props;
+    const { flash } = usePage().props;
 
-    const { data, setData, post, put, delete: destroy, reset, errors, processing } = useForm({
-        id: '',
-        name: '',
-        icon: '',
-        type: 'tempat',
+    const {
+        data,
+        setData,
+        post,
+        put,
+        delete: destroy,
+        reset,
+        errors,
+        processing,
+    } = useForm({
+        id: "",
+        name: "",
+        icon: "",
+        type: "tempat",
         order: 0,
     });
 
@@ -41,7 +50,7 @@ export default function Index({ categories }) {
         setData({
             id: item.id,
             name: item.name,
-            icon: item.icon || '',
+            icon: item.icon || "",
             type: item.type,
             order: item.order,
         });
@@ -57,37 +66,45 @@ export default function Index({ categories }) {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (editMode) {
-            put(route('admin.categories.update', data.id), {
-                onSuccess: () => { setIsModalOpen(false); reset(); }
+            put(route("admin.categories.update", data.id), {
+                onSuccess: () => {
+                    setIsModalOpen(false);
+                    reset();
+                },
             });
         } else {
-            post(route('admin.categories.store'), {
-                onSuccess: () => { setIsModalOpen(false); reset(); }
+            post(route("admin.categories.store"), {
+                onSuccess: () => {
+                    setIsModalOpen(false);
+                    reset();
+                },
             });
         }
     };
 
     const handleDelete = () => {
         if (selectedCategory) {
-            destroy(route('admin.categories.destroy', selectedCategory.id), {
+            destroy(route("admin.categories.destroy", selectedCategory.id), {
                 onSuccess: () => {
                     setIsDeleteModalOpen(false);
                     setSelectedCategory(null);
-                }
+                },
             });
         }
     };
 
     const getTypeBadge = (type) => {
         const types = {
-            tempat: { label: 'Tempat', color: 'blue', icon: '📍' },
-            acara: { label: 'Acara', color: 'purple', icon: '🎉' },
-            hormat: { label: 'Hormat', color: 'amber', icon: '🙏' }
+            tempat: { label: "Tempat", color: "blue", icon: "📍" },
+            acara: { label: "Acara", color: "purple", icon: "🎉" },
+            hormat: { label: "Hormat", color: "amber", icon: "🙏" },
         };
-        const t = types[type] || { label: type, color: 'gray', icon: '📦' };
-        
+        const t = types[type] || { label: type, color: "gray", icon: "📦" };
+
         return (
-            <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-${t.color}-50 text-${t.color}-700 border border-${t.color}-200`}>
+            <div
+                className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-${t.color}-50 text-${t.color}-700 border border-${t.color}-200`}
+            >
                 <span>{t.icon}</span>
                 <span>{t.label}</span>
             </div>
@@ -99,11 +116,19 @@ export default function Index({ categories }) {
             <Head title="Master Kategori" />
 
             {/* Flash Messages */}
-            {flashErrors && flashErrors.error && (
-                <div className="mb-6 p-4 bg-gradient-to-r from-red-50 to-red-100 border-l-4 border-red-500 text-red-700 rounded-lg shadow-sm animate-fade-in">
+            {flash?.error && (
+                <div className="mb-6 p-4 bg-gradient-to-r from-red-50 to-green-100 border-l-4 border-red-500 text-red-700 rounded-lg shadow-sm">
                     <div className="flex items-center gap-2">
-                        <AlertCircle size={20} className="flex-shrink-0" />
-                        <p className="text-sm font-medium">{flashErrors.error}</p>
+                        <AlertCircle size={20} />
+                        <p className="text-sm font-medium">{flash.error}</p>
+                    </div>
+                </div>
+            )}
+            {flash?.success && (
+                <div className="mb-6 p-4 bg-gradient-to-r from-green-50 to-red-100 border-l-4 border-green-500 text-green-700 rounded-lg shadow-sm animate-fade-in">
+                    <div className="flex items-center gap-2">
+                        <CheckCircle size={20} className="flex-shrink-0" />
+                        <p className="text-sm font-medium">{flash.success}</p>
                     </div>
                 </div>
             )}
@@ -113,8 +138,12 @@ export default function Index({ categories }) {
                 <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg p-5 text-white transform hover:scale-105 transition-transform duration-300">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-blue-100 text-sm font-medium mb-1">Total Kategori</p>
-                            <p className="text-3xl font-bold">{categories.length}</p>
+                            <p className="text-blue-100 text-sm font-medium mb-1">
+                                Total Kategori
+                            </p>
+                            <p className="text-3xl font-bold">
+                                {categories.length}
+                            </p>
                         </div>
                         <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
                             <FolderTree size={24} className="text-white" />
@@ -128,8 +157,16 @@ export default function Index({ categories }) {
                 <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl shadow-lg p-5 text-white transform hover:scale-105 transition-transform duration-300">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-purple-100 text-sm font-medium mb-1">Tipe Tempat</p>
-                            <p className="text-3xl font-bold">{categories.filter(c => c.type === 'tempat').length}</p>
+                            <p className="text-purple-100 text-sm font-medium mb-1">
+                                Tipe Tempat
+                            </p>
+                            <p className="text-3xl font-bold">
+                                {
+                                    categories.filter(
+                                        (c) => c.type === "tempat",
+                                    ).length
+                                }
+                            </p>
                         </div>
                         <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
                             <span className="text-2xl">📍</span>
@@ -143,8 +180,16 @@ export default function Index({ categories }) {
                 <div className="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl shadow-lg p-5 text-white transform hover:scale-105 transition-transform duration-300">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-amber-100 text-sm font-medium mb-1">Tipe Lainnya</p>
-                            <p className="text-3xl font-bold">{categories.filter(c => c.type !== 'tempat').length}</p>
+                            <p className="text-amber-100 text-sm font-medium mb-1">
+                                Tipe Lainnya
+                            </p>
+                            <p className="text-3xl font-bold">
+                                {
+                                    categories.filter(
+                                        (c) => c.type !== "tempat",
+                                    ).length
+                                }
+                            </p>
                         </div>
                         <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
                             <span className="text-2xl">🎉</span>
@@ -165,7 +210,8 @@ export default function Index({ categories }) {
                             Daftar Kategori
                         </h3>
                         <p className="text-sm text-slate-500 mt-1">
-                            3 kategori utama sebagai pemisah menu pada aplikasi mobile
+                            3 kategori utama sebagai pemisah menu pada aplikasi
+                            mobile
                         </p>
                     </div>
                     <button
@@ -210,11 +256,14 @@ export default function Index({ categories }) {
                                         Aksi
                                     </div>
                                 </th>
-                             </tr>
+                            </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {categories.map((item, index) => (
-                                <tr key={item.id} className="group hover:bg-gradient-to-r hover:from-slate-50 hover:to-transparent transition-all duration-200">
+                                <tr
+                                    key={item.id}
+                                    className="group hover:bg-gradient-to-r hover:from-slate-50 hover:to-transparent transition-all duration-200"
+                                >
                                     <td className="py-4 px-6 text-center">
                                         <div className="inline-flex items-center justify-center w-8 h-8 bg-gradient-to-br from-teal-50 to-cyan-50 text-teal-700 font-bold rounded-lg">
                                             {item.order}
@@ -222,8 +271,12 @@ export default function Index({ categories }) {
                                     </td>
                                     <td className="py-4 px-6">
                                         <div>
-                                            <p className="font-semibold text-slate-800 text-base">{item.name}</p>
-                                            <p className="text-xs text-slate-400 mt-0.5 font-mono">slug: {item.slug}</p>
+                                            <p className="font-semibold text-slate-800 text-base">
+                                                {item.name}
+                                            </p>
+                                            <p className="text-xs text-slate-400 mt-0.5 font-mono">
+                                                slug: {item.slug}
+                                            </p>
                                         </div>
                                     </td>
                                     <td className="py-4 px-6">
@@ -232,24 +285,40 @@ export default function Index({ categories }) {
                                     <td className="py-4 px-6">
                                         {item.icon ? (
                                             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg">
-                                                <span className="text-lg">{item.icon === 'chair-school' ? '🪑' : item.icon === 'calendar' ? '📅' : '🔖'}</span>
-                                                <code className="text-xs text-slate-600 font-mono">{item.icon}</code>
+                                                <span className="text-lg">
+                                                    {item.icon ===
+                                                    "chair-school"
+                                                        ? "🪑"
+                                                        : item.icon ===
+                                                            "calendar"
+                                                          ? "📅"
+                                                          : "🔖"}
+                                                </span>
+                                                <code className="text-xs text-slate-600 font-mono">
+                                                    {item.icon}
+                                                </code>
                                             </div>
                                         ) : (
-                                            <span className="text-slate-400 text-sm">-</span>
+                                            <span className="text-slate-400 text-sm">
+                                                -
+                                            </span>
                                         )}
                                     </td>
                                     <td className="py-4 px-6">
                                         <div className="flex items-center justify-center gap-2">
                                             <button
-                                                onClick={() => openEditModal(item)}
+                                                onClick={() =>
+                                                    openEditModal(item)
+                                                }
                                                 className="p-2 text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg transition-all duration-200 group-hover:scale-110"
                                                 title="Ubah Kategori"
                                             >
                                                 <Edit size={16} />
                                             </button>
                                             <button
-                                                onClick={() => openDeleteModal(item)}
+                                                onClick={() =>
+                                                    openDeleteModal(item)
+                                                }
                                                 className="p-2 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-all duration-200 group-hover:scale-110"
                                                 title="Hapus Kategori"
                                             >
@@ -257,7 +326,7 @@ export default function Index({ categories }) {
                                             </button>
                                         </div>
                                     </td>
-                                  </tr>
+                                </tr>
                             ))}
                         </tbody>
                     </table>
@@ -265,7 +334,10 @@ export default function Index({ categories }) {
 
                 {categories.length === 0 && (
                     <div className="p-12 text-center">
-                        <FolderTree size={48} className="mx-auto text-slate-300 mb-3" />
+                        <FolderTree
+                            size={48}
+                            className="mx-auto text-slate-300 mb-3"
+                        />
                         <p className="text-slate-500">Belum ada kategori</p>
                         <button
                             onClick={openCreateModal}
@@ -285,37 +357,50 @@ export default function Index({ categories }) {
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-teal-500/20 rounded-xl flex items-center justify-center">
                                     {editMode ? (
-                                        <Edit size={20} className="text-teal-400" />
+                                        <Edit
+                                            size={20}
+                                            className="text-teal-400"
+                                        />
                                     ) : (
-                                        <Plus size={20} className="text-teal-400" />
+                                        <Plus
+                                            size={20}
+                                            className="text-teal-400"
+                                        />
                                     )}
                                 </div>
                                 <div>
                                     <h3 className="font-bold text-lg">
-                                        {editMode ? 'Ubah Kategori' : 'Tambah Kategori Baru'}
+                                        {editMode
+                                            ? "Ubah Kategori"
+                                            : "Tambah Kategori Baru"}
                                     </h3>
                                     <p className="text-slate-400 text-xs mt-0.5">
-                                        {editMode ? 'Edit informasi kategori' : 'Isi form untuk menambah kategori'}
+                                        {editMode
+                                            ? "Edit informasi kategori"
+                                            : "Isi form untuk menambah kategori"}
                                     </p>
                                 </div>
                             </div>
-                            <button 
-                                onClick={() => setIsModalOpen(false)} 
+                            <button
+                                onClick={() => setIsModalOpen(false)}
                                 className="p-2 rounded-lg hover:bg-slate-700 transition-colors duration-200"
                             >
                                 <X size={20} />
                             </button>
                         </div>
-                        
+
                         <form onSubmit={handleSubmit} className="p-6 space-y-5">
                             <div>
                                 <label className="block text-xs font-bold text-slate-700 uppercase mb-2 tracking-wider">
-                                    Nama Kategori <span className="text-red-500">*</span>
+                                    Nama Kategori{" "}
+                                    <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="text"
                                     value={data.name}
-                                    onChange={e => setData('name', e.target.value)}
+                                    onChange={(e) =>
+                                        setData("name", e.target.value)
+                                    }
                                     placeholder="Contoh: Tata Tempat, Susunan Acara, Tata Cara"
                                     className="w-full text-sm border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
                                     autoFocus
@@ -330,36 +415,56 @@ export default function Index({ categories }) {
 
                             <div>
                                 <label className="block text-xs font-bold text-slate-700 uppercase mb-2 tracking-wider">
-                                    Tipe Data Sistem <span className="text-red-500">*</span>
+                                    Tipe Data Sistem{" "}
+                                    <span className="text-red-500">*</span>
                                 </label>
                                 <div className="grid grid-cols-3 gap-3">
-                                    {['tempat', 'acara', 'hormat'].map((type) => (
-                                        <label
-                                            key={type}
-                                            className={`cursor-pointer p-3 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 ${
-                                                data.type === type
-                                                    ? 'border-teal-500 bg-teal-50'
-                                                    : 'border-slate-200 hover:border-teal-300'
-                                            }`}
-                                        >
-                                            <input
-                                                type="radio"
-                                                value={type}
-                                                checked={data.type === type}
-                                                onChange={e => setData('type', e.target.value)}
-                                                className="hidden"
-                                            />
-                                            <span className="text-2xl">
-                                                {type === 'tempat' ? '📍' : type === 'acara' ? '🎉' : '🙏'}
-                                            </span>
-                                            <span className="text-xs font-medium capitalize">
-                                                {type === 'tempat' ? 'Tempat' : type === 'acara' ? 'Acara' : 'Hormat'}
-                                            </span>
-                                            <span className="text-[10px] text-slate-500 text-center">
-                                                {type === 'tempat' ? 'Layout Posisi' : type === 'acara' ? 'Susunan Acara' : 'Sapaan Tokoh'}
-                                            </span>
-                                        </label>
-                                    ))}
+                                    {["tempat", "acara", "hormat"].map(
+                                        (type) => (
+                                            <label
+                                                key={type}
+                                                className={`cursor-pointer p-3 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 ${
+                                                    data.type === type
+                                                        ? "border-teal-500 bg-teal-50"
+                                                        : "border-slate-200 hover:border-teal-300"
+                                                }`}
+                                            >
+                                                <input
+                                                    type="radio"
+                                                    value={type}
+                                                    checked={data.type === type}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            "type",
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    className="hidden"
+                                                />
+                                                <span className="text-2xl">
+                                                    {type === "tempat"
+                                                        ? "📍"
+                                                        : type === "acara"
+                                                          ? "🎉"
+                                                          : "🙏"}
+                                                </span>
+                                                <span className="text-xs font-medium capitalize">
+                                                    {type === "tempat"
+                                                        ? "Tempat"
+                                                        : type === "acara"
+                                                          ? "Acara"
+                                                          : "Hormat"}
+                                                </span>
+                                                <span className="text-[10px] text-slate-500 text-center">
+                                                    {type === "tempat"
+                                                        ? "Layout Posisi"
+                                                        : type === "acara"
+                                                          ? "Susunan Acara"
+                                                          : "Sapaan Tokoh"}
+                                                </span>
+                                            </label>
+                                        ),
+                                    )}
                                 </div>
                                 {errors.type && (
                                     <p className="text-red-500 text-xs mt-2 flex items-center gap-1">
@@ -377,7 +482,9 @@ export default function Index({ categories }) {
                                     <input
                                         type="text"
                                         value={data.icon}
-                                        onChange={e => setData('icon', e.target.value)}
+                                        onChange={(e) =>
+                                            setData("icon", e.target.value)
+                                        }
                                         placeholder="chair-school, calendar"
                                         className="w-full text-sm border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
                                     />
@@ -392,7 +499,9 @@ export default function Index({ categories }) {
                                     <input
                                         type="number"
                                         value={data.order}
-                                        onChange={e => setData('order', e.target.value)}
+                                        onChange={(e) =>
+                                            setData("order", e.target.value)
+                                        }
                                         className="w-full text-sm border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200"
                                         min="0"
                                     />
@@ -403,33 +512,43 @@ export default function Index({ categories }) {
                             </div>
 
                             <div className="p-4 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200">
-                                <p className="text-xs font-semibold text-slate-600 mb-2 uppercase tracking-wider">Preview</p>
+                                <p className="text-xs font-semibold text-slate-600 mb-2 uppercase tracking-wider">
+                                    Preview
+                                </p>
                                 <div className="flex items-center gap-3">
                                     <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center text-2xl">
-                                        {data.type === 'tempat' ? '📍' : data.type === 'acara' ? '🎉' : '🙏'}
+                                        {data.type === "tempat"
+                                            ? "📍"
+                                            : data.type === "acara"
+                                              ? "🎉"
+                                              : "🙏"}
                                     </div>
                                     <div>
-                                        <p className="font-semibold text-slate-800">{data.name || 'Nama Kategori'}</p>
+                                        <p className="font-semibold text-slate-800">
+                                            {data.name || "Nama Kategori"}
+                                        </p>
                                         <p className="text-xs text-slate-500 mt-0.5">
-                                            {data.type === 'tempat' ? 'Skenario Layout Posisi Duduk' : 
-                                             data.type === 'acara' ? 'Template Checklist Susunan Acara' : 
-                                             'Sapaan & Perlakuan Tokoh'}
+                                            {data.type === "tempat"
+                                                ? "Skenario Layout Posisi Duduk"
+                                                : data.type === "acara"
+                                                  ? "Template Checklist Susunan Acara"
+                                                  : "Sapaan & Perlakuan Tokoh"}
                                         </p>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="pt-4 border-t border-slate-200 flex justify-end gap-3">
-                                <button 
-                                    type="button" 
-                                    onClick={() => setIsModalOpen(false)} 
+                                <button
+                                    type="button"
+                                    onClick={() => setIsModalOpen(false)}
                                     className="px-5 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all duration-200"
                                 >
                                     Batal
                                 </button>
-                                <button 
-                                    type="submit" 
-                                    disabled={processing} 
+                                <button
+                                    type="submit"
+                                    disabled={processing}
                                     className="px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2"
                                 >
                                     {processing ? (
@@ -458,34 +577,44 @@ export default function Index({ categories }) {
                         <div className="px-6 py-5 bg-gradient-to-r from-red-600 to-red-700 text-white flex justify-between items-center">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                                    <AlertTriangle size={20} className="text-white" />
+                                    <AlertTriangle
+                                        size={20}
+                                        className="text-white"
+                                    />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-lg">Konfirmasi Hapus</h3>
+                                    <h3 className="font-bold text-lg">
+                                        Konfirmasi Hapus
+                                    </h3>
                                     <p className="text-red-100 text-xs mt-0.5">
                                         Tindakan ini tidak dapat dibatalkan
                                     </p>
                                 </div>
                             </div>
-                            <button 
-                                onClick={() => setIsDeleteModalOpen(false)} 
+                            <button
+                                onClick={() => setIsDeleteModalOpen(false)}
                                 className="p-2 rounded-lg hover:bg-white/10 transition-colors duration-200"
                             >
                                 <X size={20} />
                             </button>
                         </div>
-                        
+
                         {/* Modal Body */}
                         <div className="p-6">
                             <div className="text-center mb-6">
                                 <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                    <Trash2 size={32} className="text-red-600" />
+                                    <Trash2
+                                        size={32}
+                                        className="text-red-600"
+                                    />
                                 </div>
                                 <p className="text-slate-700 font-medium mb-2">
-                                    Apakah Anda yakin ingin menghapus kategori ini?
+                                    Apakah Anda yakin ingin menghapus kategori
+                                    ini?
                                 </p>
                                 <p className="text-slate-500 text-sm">
-                                    Data yang dihapus tidak dapat dikembalikan lagi.
+                                    Data yang dihapus tidak dapat dikembalikan
+                                    lagi.
                                 </p>
                             </div>
 
@@ -493,15 +622,26 @@ export default function Index({ categories }) {
                             <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 mb-6">
                                 <div className="flex items-start gap-3">
                                     <div className="w-10 h-10 bg-gradient-to-br from-slate-200 to-slate-300 rounded-lg flex items-center justify-center text-lg">
-                                        {selectedCategory.type === 'tempat' ? '📍' : 
-                                         selectedCategory.type === 'acara' ? '🎉' : '🙏'}
+                                        {selectedCategory.type === "tempat"
+                                            ? "📍"
+                                            : selectedCategory.type === "acara"
+                                              ? "🎉"
+                                              : "🙏"}
                                     </div>
                                     <div className="flex-1">
-                                        <p className="font-semibold text-slate-800">{selectedCategory.name}</p>
+                                        <p className="font-semibold text-slate-800">
+                                            {selectedCategory.name}
+                                        </p>
                                         <div className="flex items-center gap-2 mt-1.5">
-                                            <span className="text-xs text-slate-500">Order: {selectedCategory.order}</span>
-                                            <span className="text-xs text-slate-300">•</span>
-                                            <span className="text-xs text-slate-500">Tipe: {selectedCategory.type}</span>
+                                            <span className="text-xs text-slate-500">
+                                                Order: {selectedCategory.order}
+                                            </span>
+                                            <span className="text-xs text-slate-300">
+                                                •
+                                            </span>
+                                            <span className="text-xs text-slate-500">
+                                                Tipe: {selectedCategory.type}
+                                            </span>
                                         </div>
                                         {selectedCategory.icon && (
                                             <p className="text-xs text-slate-400 mt-1 font-mono">
@@ -511,28 +651,32 @@ export default function Index({ categories }) {
                                     </div>
                                 </div>
                             </div>
-
                             {/* Warning Message */}
                             <div className="mb-6 p-3 bg-amber-50 border border-amber-200 rounded-lg">
                                 <div className="flex items-start gap-2">
-                                    <AlertCircle size={16} className="text-amber-600 flex-shrink-0 mt-0.5" />
+                                    <AlertCircle
+                                        size={16}
+                                        className="text-amber-600 flex-shrink-0 mt-0.5"
+                                    />
                                     <p className="text-xs text-amber-700">
-                                        Menghapus kategori akan menghapus semua data terkait yang menggunakan kategori ini.
+                                        Menghapus kategori akan menghapus semua
+                                        data terkait yang menggunakan kategori
+                                        ini.
                                     </p>
                                 </div>
                             </div>
 
                             {/* Modal Footer */}
                             <div className="flex justify-end gap-3">
-                                <button 
-                                    onClick={() => setIsDeleteModalOpen(false)} 
+                                <button
+                                    onClick={() => setIsDeleteModalOpen(false)}
                                     className="px-5 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all duration-200"
                                 >
                                     Batal
                                 </button>
-                                <button 
-                                    onClick={handleDelete} 
-                                    disabled={processing} 
+                                <button
+                                    onClick={handleDelete}
+                                    disabled={processing}
                                     className="px-5 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2"
                                 >
                                     {processing ? (

@@ -186,4 +186,28 @@ class ProtocolApiController extends Controller
             'data' => $honorifics
         ], 200);
     }
+
+    // public function quickSearchHonorifics(Request $request)
+    // {
+    //     $keyword = $request->query('q');
+
+    //     if (empty($keyword)) {
+    //         return response()->json([
+    //             'success' => true,
+    //             'data' => []
+    //         ], 200);
+    //     }
+
+    //     $results = Honorific::where(function ($query) use ($keyword) {
+    //             $query->where('jabatan', 'LIKE', "%{$keyword}%");
+    //         })
+    //         ->orderBy('tingkat')
+    //         ->get();
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'count' => $results->count(),
+    //         'data' => $results
+    //     ], 200);
+    // }
 }
