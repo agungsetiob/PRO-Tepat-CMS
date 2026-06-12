@@ -85,7 +85,7 @@ export default function Login({ status, canResetPassword }) {
                                         className="h-12 w-auto mx-auto mb-3"
                                     />
                                     <h2 className="text-2xl font-bold text-slate-800">
-                                        PRO-Tepat
+                                        PROTAP
                                     </h2>
                                     <p className="text-sm text-slate-500 mt-1">
                                         Selamat datang, silakan login ke akun Anda
@@ -107,7 +107,7 @@ export default function Login({ status, canResetPassword }) {
                                     />
 
                                     <h2 className="text-2xl font-bold text-slate-800">
-                                        PRO-Tepat
+                                        PROTAP
                                     </h2>
                                     <p className="text-sm text-slate-500 mt-1">
                                         Selamat datang, silakan login untuk mengakses dashboard

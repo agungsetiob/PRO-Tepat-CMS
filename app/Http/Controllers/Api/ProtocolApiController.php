@@ -11,22 +11,21 @@ use Illuminate\Http\Request;
 
 class ProtocolApiController extends Controller
 {
-    /**
-     * Menampilkan semua master data skenario untuk pencarian global.
-     */
     public function index(): JsonResponse
     {
         try {
             $scenarios = Scenario::with('category')
-                ->orderBy('title', 'asc')
-                ->get();
+                ->where('is_active', true)
+                ->orderBy('id', 'desc')
+                ->cursorPaginate(3);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Master data skenario berhasil dimuat',
-                'data' => $scenarios
+                'data' => $scenarios->items(),
+                'next_cursor' => $scenarios->nextCursor() ? $scenarios->nextCursor()->encode() : null,
+                'has_more' => $scenarios->hasMorePages()
             ], 200);
-
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
@@ -34,6 +33,24 @@ class ProtocolApiController extends Controller
                 'data' => []
             ], 500);
         }
+    }
+
+    /**
+     * 
+     * Mengambil pedoman yang berada di urutan teratas
+     */
+    public function getPopularScenarios()
+    {
+        $populars = Scenario::where('is_active', true)
+            ->with(['category'])
+            ->limit(3)
+            ->orderBy('updated_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $populars
+        ], 200);
     }
     /**
      * DASHBOARD
@@ -54,9 +71,9 @@ class ProtocolApiController extends Controller
 
     /**
      * LIST SKENARIO PER KATEGORI
-     * Dipanggil saat user mengetuk salah satu kategori di mobile
+     * 
      */
-    public function getScenariosByCategory($slug)
+    public function getScenariosByCategory(Request $request, $slug)
     {
         $category = Category::where('slug', $slug)->first();
 
@@ -67,20 +84,23 @@ class ProtocolApiController extends Controller
             ], 404);
         }
 
-        // Ambil skenario yang terikat dengan kategori ini saja
+        $perPage = $request->query('per_page', 1);
         $scenarios = Scenario::where('category_id', $category->id)
             ->where('is_active', true)
-            ->with(['tags']) // Sertakan tag untuk keperluan badging di UI mobile
-            ->orderBy('order')
-            ->get();
+            ->with(['tags'])
+            ->orderBy('order', 'asc')
+            ->paginate($perPage);
 
         return response()->json([
             'success' => true,
             'message' => 'Daftar skenario kategori ' . $category->name . ' berhasil dimuat.',
             'category_name' => $category->name,
             'category_type' => $category->type,
-            'count' => $scenarios->count(),
-            'data' => $scenarios
+            'current_page' => $scenarios->currentPage(),
+            'last_page' => $scenarios->lastPage(),
+            'total' => $scenarios->total(),
+            'has_more' => $scenarios->hasMorePages(),
+            'data' => $scenarios->items() // Memisahkan payload data murni dari meta pagination standard
         ], 200);
     }
 
@@ -124,7 +144,8 @@ class ProtocolApiController extends Controller
         if (empty($keyword)) {
             return response()->json([
                 'success' => true,
-                'data' => []
+                'data' => [],
+                'has_more' => false
             ], 200);
         }
 
@@ -137,31 +158,14 @@ class ProtocolApiController extends Controller
                     });
             })
             ->with(['category', 'tags'])
-            ->orderBy('order')
-            ->get();
+            ->orderBy('order', 'asc')
+            ->paginate(10);
 
         return response()->json([
             'success' => true,
-            'count' => $results->count(),
-            'data' => $results
-        ], 200);
-    }
-
-    /**
-     * 
-     * Mengambil pedoman yang berada di urutan teratas
-     */
-    public function getPopularScenarios()
-    {
-        $populars = Scenario::where('is_active', true)
-            ->with(['category'])
-            ->limit(3)
-            ->orderBy('updated_at', 'desc')
-            ->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $populars
+            'current_page' => $results->currentPage(),
+            'has_more' => $results->hasMorePages(),
+            'data' => $results->items()
         ], 200);
     }
 
@@ -187,27 +191,27 @@ class ProtocolApiController extends Controller
         ], 200);
     }
 
-    // public function quickSearchHonorifics(Request $request)
-    // {
-    //     $keyword = $request->query('q');
+    public function quickSearchHonorifics(Request $request)
+    {
+        $keyword = $request->query('q');
 
-    //     if (empty($keyword)) {
-    //         return response()->json([
-    //             'success' => true,
-    //             'data' => []
-    //         ], 200);
-    //     }
+        if (empty($keyword)) {
+            return response()->json([
+                'success' => true,
+                'data' => []
+            ], 200);
+        }
 
-    //     $results = Honorific::where(function ($query) use ($keyword) {
-    //             $query->where('jabatan', 'LIKE', "%{$keyword}%");
-    //         })
-    //         ->orderBy('tingkat')
-    //         ->get();
+        $results = Honorific::where(function ($query) use ($keyword) {
+            $query->where('jabatan', 'LIKE', "%{$keyword}%");
+        })
+            ->orderBy('tingkat')
+            ->get();
 
-    //     return response()->json([
-    //         'success' => true,
-    //         'count' => $results->count(),
-    //         'data' => $results
-    //     ], 200);
-    // }
+        return response()->json([
+            'success' => true,
+            'count' => $results->count(),
+            'data' => $results
+        ], 200);
+    }
 }

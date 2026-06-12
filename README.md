@@ -6,6 +6,9 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
+## PROTAP-CMS
+## Aplikasi Pedoman Keprotokolan Kabupaten tanah Bumbu
+## hubungi telegram @ksatriamacan jika berminat terhadap app ini atau untuk kerjasama dan jasa
 
 ## About Laravel
 
