@@ -181,8 +181,8 @@ class ScenarioController extends Controller
 
     public function kelolaMateri(Scenario $scenario)
     {
-        // Bagian Tata Tempat (Sudah dibuat di Step 2)
-        if ($scenario->category->type === 'tempat') {
+        // Bagian Tata Tempat & Penghormatan (Sudah dibuat di Step 2)
+        if ($scenario->category->type === 'tempat' || $scenario->category->type === 'hormat') {
             $protocol = Protocol::where('scenario_id', $scenario->id)->with('seatingRules.honorific')->first();
             $honorifics = Honorific::urutanProtokol()->get();
 
@@ -193,8 +193,8 @@ class ScenarioController extends Controller
             ]);
         }
 
-        // [BARU] Bagian Tata Acara & Penghormatan (Step 3)
-        if ($scenario->category->type === 'acara' || $scenario->category->type === 'hormat') {
+        // [BARU] Bagian Tata Acara (Step 3)
+        if ($scenario->category->type === 'acara') {
             $checklists = EventChecklist::where('scenario_id', $scenario->id)->orderBy('order')->get();
             $equipments = EventEquipment::where('scenario_id', $scenario->id)->get();
 

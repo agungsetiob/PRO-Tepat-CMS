@@ -122,7 +122,7 @@ class ProtocolApiController extends Controller
             ], 404);
         }
 
-        if ($scenario->category->type === 'tempat') {
+        if ($scenario->category->type === 'tempat' || $scenario->category->type === 'hormat') {
             $scenario->load(['protocols.seatingRules.honorific']);
         } else {
             $scenario->load(['checklists', 'equipments']);
