@@ -146,7 +146,7 @@ export default function MateriTempat({ scenario, protocol, honorifics }) {
         : [''];
 
     const { data, setData, post, processing, errors } = useForm({
-        title: protocol?.title || `Pedoman Aturan ${scenario.title}`,
+        title: protocol?.title || `${scenario.title}`,
         content: protocol?.content || '',
         image_infographic: null,
         references: initialReferences,

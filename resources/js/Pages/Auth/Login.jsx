@@ -28,7 +28,7 @@ export default function Login({ status, canResetPassword }) {
 
     return (
         <>
-            <Head title="Login - Protokol Tanbu" />
+            <Head title="Login" />
 
             <div className="min-h-screen bg-gradient-to-br from-slate-900 via-teal-900 to-slate-900 relative overflow-hidden">
                 {/* Background Pattern */}
@@ -297,7 +297,7 @@ export default function Login({ status, canResetPassword }) {
                                         </span>
                                     </div>
                                     <p className="text-xs text-slate-400 mt-3">
-                                        © 2026 Protokol Tanah Bumbu. All rights
+                                        © 2026 PRO-Tepat Tanah Bumbu. All rights
                                         reserved.
                                     </p>
                                 </div>
