@@ -171,33 +171,97 @@ class ProtocolSeeder extends Seeder
     /**
      * Helper privat untuk mengisi relasi anak sub-table secara otomatis
      */
+    // private function seedChildrenData($scenario, $honorificIds, $faker)
+    // {
+    //     // 1. Buat Sub-table: Protocols
+    //     for ($p = 1; $p <= $faker->numberBetween(1, 2); $p++) {
+    //         $protocol = Protocol::create([
+    //             'scenario_id' => $scenario->id,
+    //             'title' => "Bab $p: Pedoman Teknis " . $faker->words(3, true),
+    //             'content' => "Menimbang Ketentuan Protokoler Negara, Aturan Preseance nomor urut kedudukan pejabat daerah didasarkan atas UU Nomor 9 Tahun 2010. Pihak Protokol Pemkab wajib menata susunan ini demi kelancaran.",
+    //             'image_infographic' => null,
+    //             'references' => json_encode(["Pasal " . $faker->numberBetween(1, 40) . " Perbup Tanah Bumbu No " . $faker->numberBetween(2018, 2026)]),
+    //             'order' => $p,
+    //         ]);
+
+    //         // Jika tipenya tata tempat, isi seating_rules
+    //         if ($scenario->category->type === 'tempat') {
+    //             $labels = ['Utama Tengah', 'Sayap Kanan (Urutan 2)', 'Sayap Kiri (Urutan 3)', 'Urutan Belakang'];
+    //             foreach ($labels as $idx => $label) {
+    //                 DB::table('seating_rules')->insert([
+    //                     'protocol_id' => $protocol->id,
+    //                     'position_label' => $label,
+    //                     'honorific_id' => $faker->randomElement($honorificIds),
+    //                     'note' => 'Aturan posisi pengaturan nomor ke-' . ($idx + 1),
+    //                     'order' => $idx + 1,
+    //                     'created_at' => now(),
+    //                     'updated_at' => now(),
+    //                 ]);
+    //             }
+    //         }
+    //     }
+
+    //     // 2. Buat Sub-table: Event Checklists
+    //     $sections = ['Acara Persiapan', 'Acara Pokok', 'Acara Penutup'];
+    //     foreach ($sections as $secIdx => $section) {
+    //         for ($c = 1; $c <= 3; $c++) {
+    //             DB::table('event_checklists')->insert([
+    //                 'scenario_id' => $scenario->id,
+    //                 'section' => $section,
+    //                 'item' => "Poin Agenda: " . $faker->sentence(4),
+    //                 'order' => ($secIdx * 10) + $c,
+    //                 'created_at' => now(),
+    //                 'updated_at' => now(),
+    //             ]);
+    //         }
+    //     }
+
+    //     // 3. Buat Sub-table: Event Equipment
+    //     $equipments = [
+    //         ['name' => 'Podium Utama Lambang Daerah', 'category' => 'kelengkapan'],
+    //         ['name' => 'Bendera Merah Putih & Pataka', 'category' => 'kelengkapan'],
+    //         ['name' => 'Sound System Wireless 2000 Watt', 'category' => 'perlengkapan'],
+    //         ['name' => 'Kursi Gilded VIP Jati', 'category' => 'perlengkapan'],
+    //     ];
+
+    //     foreach ($equipments as $eq) {
+    //         DB::table('event_equipment')->insert([
+    //             'scenario_id' => $scenario->id,
+    //             'name' => $eq['name'],
+    //             'category' => $eq['category'],
+    //             'created_at' => now(),
+    //             'updated_at' => now(),
+    //         ]);
+    //     }
+    // }
+    /**
+     * Helper privat untuk mengisi relasi anak sub-table secara otomatis
+     */
     private function seedChildrenData($scenario, $honorificIds, $faker)
     {
-        // 1. Buat Sub-table: Protocols
-        for ($p = 1; $p <= $faker->numberBetween(1, 2); $p++) {
-            $protocol = Protocol::create([
-                'scenario_id' => $scenario->id,
-                'title' => "Bab $p: Pedoman Teknis " . $faker->words(3, true),
-                'content' => "Menimbang Ketentuan Protokoler Negara, Aturan Preseance nomor urut kedudukan pejabat daerah didasarkan atas UU Nomor 9 Tahun 2010. Pihak Protokol Pemkab wajib menata susunan ini demi kelancaran.",
-                'image_infographic' => null,
-                'references' => json_encode(["Pasal " . $faker->numberBetween(1, 40) . " Perbup Tanah Bumbu No " . $faker->numberBetween(2018, 2026)]),
-                'order' => $p,
-            ]);
+        // 1. Buat Sub-table: Protocols (Diubah menjadi TEPAT 1 Protokol per Skenario)
+        $protocol = Protocol::create([
+            'scenario_id' => $scenario->id,
+            'title' => "Pedoman Teknis Utama " . $faker->words(3, true),
+            'content' => "Menimbang Ketentuan Protokoler Negara, Aturan Preseance nomor urut kedudukan pejabat daerah didasarkan atas UU Nomor 9 Tahun 2010. Pihak Protokol Pemkab wajib menata susunan ini demi kelancaran.",
+            'image_infographic' => null,
+            'references' => json_encode(["Pasal " . $faker->numberBetween(1, 40) . " Perbup Tanah Bumbu No " . $faker->numberBetween(2018, 2026)]),
+            'order' => 1,
+        ]);
 
-            // Jika tipenya tata tempat, isi seating_rules
-            if ($scenario->category->type === 'tempat') {
-                $labels = ['Utama Tengah', 'Sayap Kanan (Urutan 2)', 'Sayap Kiri (Urutan 3)', 'Urutan Belakang'];
-                foreach ($labels as $idx => $label) {
-                    DB::table('seating_rules')->insert([
-                        'protocol_id' => $protocol->id,
-                        'position_label' => $label,
-                        'honorific_id' => $faker->randomElement($honorificIds),
-                        'note' => 'Aturan posisi pengaturan nomor ke-' . ($idx + 1),
-                        'order' => $idx + 1,
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                }
+        // Jika tipenya tata tempat, isi seating_rules menggunakan $protocol yang baru dibuat
+        if ($scenario->category->type === 'tempat') {
+            $labels = ['Utama Tengah', 'Sayap Kanan (Urutan 2)', 'Sayap Kiri (Urutan 3)', 'Urutan Belakang'];
+            foreach ($labels as $idx => $label) {
+                DB::table('seating_rules')->insert([
+                    'protocol_id' => $protocol->id,
+                    'position_label' => $label,
+                    'honorific_id' => $faker->randomElement($honorificIds),
+                    'note' => 'Aturan posisi pengaturan nomor ke-' . ($idx + 1),
+                    'order' => $idx + 1,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
             }
         }
 
