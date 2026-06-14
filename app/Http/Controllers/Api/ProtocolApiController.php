@@ -84,7 +84,7 @@ class ProtocolApiController extends Controller
             ], 404);
         }
 
-        $perPage = $request->query('per_page', 1);
+        $perPage = $request->query('per_page', 7);
         $scenarios = Scenario::where('category_id', $category->id)
             ->where('is_active', true)
             ->with(['tags'])

@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { Link, usePage } from "@inertiajs/react";
-import { 
-  LayoutDashboard, 
-  FolderTree, 
-  Crown, 
-  Film, 
-  Menu, 
-  X,
-  LogOut,
-  User,
-  ChevronRight,
+import {
+    LayoutDashboard,
+    FolderTree,
+    Crown,
+    Film,
+    Menu,
+    X,
+    LogOut,
+    User,
+    ChevronRight,
 } from "lucide-react";
 
 export default function AdminLayout({ children, header }) {
@@ -65,17 +65,17 @@ export default function AdminLayout({ children, header }) {
                 <div className={`p-5 border-b border-slate-700/50 bg-slate-900/50 backdrop-blur-sm transition-all duration-300 ${isSidebarOpen ? "px-6" : "px-4"}`}>
                     {isSidebarOpen ? (
                         <div className="flex items-center justify-center">
-                            <img 
-                                src="/beraksi-logo.webp" 
-                                alt="Protokol Tanbu" 
+                            <img
+                                src="/beraksi-logo.webp"
+                                alt="Protokol Tanbu"
                                 className="h-12 w-auto object-contain"
                             />
                         </div>
                     ) : (
                         <div className="flex justify-center">
-                            <img 
-                                src="/beraksi-logo.webp" 
-                                alt="Logo" 
+                            <img
+                                src="/beraksi-logo.webp"
+                                alt="Logo"
                                 className="h-10 w-10 rounded-lg object-cover"
                             />
                         </div>
@@ -91,8 +91,8 @@ export default function AdminLayout({ children, header }) {
                                 key={item.name}
                                 href={item.href}
                                 className={`group flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 relative overflow-hidden
-                                    ${item.active 
-                                        ? "bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-lg shadow-teal-500/30" 
+                                    ${item.active
+                                        ? "bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-lg shadow-teal-500/30"
                                         : "text-slate-300 hover:bg-slate-800/50 hover:text-white"
                                     }`}
                             >
@@ -143,15 +143,15 @@ export default function AdminLayout({ children, header }) {
             {/* Mobile Sidebar */}
             {isMobileMenuOpen && (
                 <>
-                    <div 
+                    <div
                         className="fixed inset-0 bg-black/50 z-40 md:hidden"
                         onClick={() => setIsMobileMenuOpen(false)}
                     />
                     <aside className="fixed left-0 top-0 z-50 h-screen w-72 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl md:hidden flex flex-col animate-slide-in">
                         <div className="p-5 border-b border-slate-700/50 flex justify-between items-center">
-                            <img 
-                                src="/beraksi-logo.webp" 
-                                alt="Protokol Tanbu" 
+                            <img
+                                src="/beraksi-logo.webp"
+                                alt="Protokol Tanbu"
                                 className="h-10 object-contain"
                             />
                             <button
@@ -161,7 +161,7 @@ export default function AdminLayout({ children, header }) {
                                 <X size={20} className="text-slate-400" />
                             </button>
                         </div>
-                        
+
                         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
                             {navigation.map((item) => {
                                 const Icon = item.icon;
@@ -171,8 +171,8 @@ export default function AdminLayout({ children, header }) {
                                         href={item.href}
                                         onClick={() => setIsMobileMenuOpen(false)}
                                         className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200
-                                            ${item.active 
-                                                ? "bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-lg" 
+                                            ${item.active
+                                                ? "bg-gradient-to-r from-teal-500 to-cyan-600 text-white shadow-lg"
                                                 : "text-slate-300 hover:bg-slate-800/50 hover:text-white"
                                             }`}
                                     >
@@ -182,7 +182,7 @@ export default function AdminLayout({ children, header }) {
                                 );
                             })}
                         </nav>
-                        
+
                         <div className="p-4 border-t border-slate-700/50">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center">
@@ -226,20 +226,24 @@ export default function AdminLayout({ children, header }) {
                                 </div>
                             )}
                         </div>
-                        
+
                         <div className="flex items-center gap-3">
-                            <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-full border border-teal-100">
-                                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                                <span className="text-sm font-medium text-slate-700">
-                                    Tanah Bumbu
-                                </span>
+                            {/* Desktop - Icon PROTAP */}
+                            <div className="hidden sm:flex items-center gap-2">
+                                <img
+                                    src="/icon-protap.png"
+                                    alt="PROTAP"
+                                    className="h-8 w-auto"
+                                />
                             </div>
-                            
-                            {/* Mobile region badge */}
-                            <div className="sm:hidden px-3 py-1.5 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-full">
-                                <span className="text-xs font-medium text-slate-700">
-                                    Tanah Bumbu
-                                </span>
+
+                            {/* Mobile - Icon PROTAP */}
+                            <div className="sm:hidden px-2 py-1 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-full">
+                                <img
+                                    src="/icon-protap.png"
+                                    alt="PROTAP"
+                                    className="h-6 w-auto"
+                                />
                             </div>
                         </div>
                     </div>

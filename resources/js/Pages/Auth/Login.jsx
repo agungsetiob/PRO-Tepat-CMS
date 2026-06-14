@@ -46,6 +46,15 @@ export default function Login({ status, canResetPassword }) {
                             <div className="hidden md:flex flex-col justify-between p-8 lg:p-12 bg-gradient-to-br from-teal-600 to-cyan-700 text-white relative overflow-hidden">
                                 <div className="absolute inset-0 bg-black/20"></div>
                                 <div className="relative z-10 flex flex-col h-full">
+                                    {/* Icon PROTAP di atas foto */}
+                                    <div className="flex justify-center mb-4">
+                                        <img
+                                            src="/beraksi-logo.webp"
+                                            alt="PROTAP Icon"
+                                            className="h-16 w-auto"
+                                        />
+                                    </div>
+
                                     {/* Foto diperbesar */}
                                     <div className="flex-1 flex items-center justify-center py-6">
                                         <div className="relative group">
@@ -72,16 +81,16 @@ export default function Login({ status, canResetPassword }) {
                                             - Pemerintah Kabupaten Tanah Bumbu
                                         </p>
                                     </div>
-                                </div>{" "}
+                                </div>
                             </div>
 
                             {/* Right Side - Login Form */}
                             <div className="p-8 lg:p-12 bg-white">
-                                {/* Mobile Logo */}
+                                {/* Mobile Logo - Beraksi logo di atas */}
                                 <div className="md:hidden text-center mb-8">
                                     <img
                                         src="/beraksi-logo.webp"
-                                        alt="Protokol Tanah Bumbu"
+                                        alt="Beraksi Logo"
                                         className="h-12 w-auto mx-auto mb-3"
                                     />
                                     <h2 className="text-2xl font-bold text-slate-800">
@@ -99,11 +108,13 @@ export default function Login({ status, canResetPassword }) {
                                         className="w-20 h-20 rounded-full object-cover mx-auto border-2 border-teal-500 shadow-lg"
                                     />
                                 </div>
+
+                                {/* Desktop - Icon PROTAP menggantikan beraksi-logo */}
                                 <div className="hidden md:block mb-8 text-center">
                                     <img
-                                        src="/beraksi-logo.webp"
-                                        alt="Beraksi"
-                                        className="h-20 w-auto mb-5 mx-auto"
+                                        src="/icon-protap.png"
+                                        alt="PROTAP Icon"
+                                        className="h-20 w-auto mb-2 mx-auto"
                                     />
 
                                     <h2 className="text-2xl font-bold text-slate-800">
@@ -297,7 +308,7 @@ export default function Login({ status, canResetPassword }) {
                                         </span>
                                     </div>
                                     <p className="text-xs text-slate-400 mt-3">
-                                        © 2026 PRO-Tepat Tanah Bumbu. All rights
+                                        © 2026 PROTAP Tanah Bumbu. All rights
                                         reserved.
                                     </p>
                                 </div>
