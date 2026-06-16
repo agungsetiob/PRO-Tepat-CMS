@@ -72,7 +72,6 @@ class ScenarioController extends Controller
         return redirect()->back()->with('message', 'Skenario berhasil ditambahkan.');
     }
 
-    // Menggunakan POST metode spoofing (_method = PUT) karena Inertia file upload via PUT bermasalah di PHP native
     public function update(Request $request, Scenario $scenario)
     {
         $validated = $request->validate([
@@ -97,15 +96,16 @@ class ScenarioController extends Controller
 
             $path = $request->file('thumbnail')->store('thumbnails', 'public');
             $validated['thumbnail'] = Storage::url($path);
+        } else {
+            unset($validated['thumbnail']);
         }
 
         $scenario->update($validated);
 
         // Sync Tags
-        if (isset($request->tags)) {
+        if ($request->filled('tags')) {
             $tagIds = [];
-            $tagNames = explode(',', $request->tags);
-            foreach ($tagNames as $name) {
+            foreach (explode(',', $request->tags) as $name) {
                 $trimmed = trim($name);
                 if ($trimmed !== '') {
                     $tag = Tag::firstOrCreate(
