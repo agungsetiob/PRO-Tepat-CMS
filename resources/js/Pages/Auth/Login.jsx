@@ -265,14 +265,12 @@ export default function Login({ status, canResetPassword }) {
                                             </span>
                                         </label>
 
-                                        {canResetPassword && (
-                                            <Link
-                                                href={route("password.request")}
-                                                className="text-sm text-teal-600 hover:text-teal-700 font-medium transition-colors"
-                                            >
+                                        <Link
+                                            href={route("password.request")}
+                                            className="text-sm text-teal-600 hover:text-teal-700 font-medium transition-colors"
+                                        >
                                                 Forgot password?
-                                            </Link>
-                                        )}
+                                        </Link>
                                     </div>
 
                                     <div className="flex justify-center">
