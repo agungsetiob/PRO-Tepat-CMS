@@ -1,5 +1,6 @@
 import { Head, Link, useForm } from "@inertiajs/react";
 import { useState } from "react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import {
     Mail,
     Lock,
@@ -17,6 +18,7 @@ export default function Login({ status, canResetPassword }) {
         email: "",
         password: "",
         remember: false,
+        turnstile_token: "",
     });
 
     const submit = (e) => {
@@ -109,7 +111,7 @@ export default function Login({ status, canResetPassword }) {
                                     />
                                 </div>
 
-                                {/* Desktop - Icon PROTAP menggantikan beraksi-logo */}
+                                {/* Desktop - Icon PROTAP*/}
                                 <div className="hidden md:block mb-8 text-center">
                                     <img
                                         src="/icon-protap.png"
@@ -272,6 +274,24 @@ export default function Login({ status, canResetPassword }) {
                                             </Link>
                                         )}
                                     </div>
+
+                                    <div className="flex justify-center">
+                                        <Turnstile
+                                            siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY}
+                                            onSuccess={(token) =>
+                                                setData("turnstile_token", token)
+                                            }
+                                            options={{
+                                                theme: "light",
+                                            }}
+                                        />
+                                    </div>
+
+                                    {errors.turnstile_token && (
+                                        <p className="text-xs text-red-600 text-center">
+                                            {errors.turnstile_token}
+                                        </p>
+                                    )}
 
                                     {/* Submit Button */}
                                     <button

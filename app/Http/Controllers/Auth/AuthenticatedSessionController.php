@@ -8,6 +8,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -29,6 +31,25 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
+        $request->validate([
+            'turnstile_token' => ['required'],
+        ]);
+
+        $response = Http::asForm()->post(
+            'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+            [
+                'secret' => config('services.turnstile.secret'),
+                'response' => $request->turnstile_token,
+                'remoteip' => $request->ip(),
+            ]
+        );
+
+        if (! $response->json('success')) {
+            throw ValidationException::withMessages([
+                'turnstile_token' => 'Verifikasi keamanan gagal. Silakan coba lagi.',
+            ]);
+        }
+
         $request->authenticate();
 
         $request->session()->regenerate();
@@ -62,5 +83,4 @@ class AuthenticatedSessionController extends Controller
                 ->latest()->take(5)->get(),
         ]);
     }
-
 }
