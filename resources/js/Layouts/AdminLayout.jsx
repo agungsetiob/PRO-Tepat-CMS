@@ -10,6 +10,7 @@ import {
     LogOut,
     User,
     ChevronRight,
+    ClipboardCheck
 } from "lucide-react";
 
 export default function AdminLayout({ children, header }) {
@@ -41,6 +42,12 @@ export default function AdminLayout({ children, header }) {
             href: route("admin.honorifics.index"),
             icon: Crown,
             active: route().current("admin.honorifics.*"),
+        },
+        {
+            name: "Master Agenda",
+            href: route("admin.master-agenda.index"),
+            icon: ClipboardCheck,
+            active: route().current("admin.master-agenda.*"),
         },
     ];
 

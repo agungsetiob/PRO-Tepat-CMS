@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\HonorificController;
 use App\Http\Controllers\Admin\ScenarioController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MasterAgendaCmsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,6 +33,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('scenarios/{scenario}/materi', [ScenarioController::class, 'kelolaMateri'])->name('scenarios.materi');
     Route::post('scenarios/{scenario}/materi/tempat', [ScenarioController::class, 'simpanMateriTempat'])->name('scenarios.materi.tempat');
     Route::post('scenarios/{scenario}/materi/acara', [ScenarioController::class, 'simpanMateriAcara'])->name('scenarios.materi.acara');
+
+    Route::get('/master-agenda', [MasterAgendaCmsController::class, 'index'])->name('master-agenda.index');
+    Route::post('/master-agenda', [MasterAgendaCmsController::class, 'store'])->name('master-agenda.store');
+    Route::put('/master-agenda/{id}', [MasterAgendaCmsController::class, 'update'])->name('master-agenda.update');
+    Route::delete('/master-agenda/{id}', [MasterAgendaCmsController::class, 'destroy'])->name('master-agenda.destroy');
 });
 
 require __DIR__ . '/auth.php';
