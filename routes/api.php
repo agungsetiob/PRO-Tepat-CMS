@@ -7,7 +7,7 @@ Route::prefix('v1')->group(function () {
     
     Route::get('/dashboard', [ProtocolApiController::class, 'getDashboard']);
     
-    // Endpoint Pencarian Pintar (Contoh akses: /api/v1/search?q=bupati)
+    // Endpoint Pencarian Pintar (Contoh akses: /api/v1/search?q=bupati) cek cek
     Route::get('/search', [ProtocolApiController::class, 'quickSearch']);
     Route::get('/search-honorifics', [ProtocolApiController::class, 'quickSearchHonorifics']);
 
