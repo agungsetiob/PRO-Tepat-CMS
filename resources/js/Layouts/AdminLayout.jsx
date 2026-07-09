@@ -10,7 +10,8 @@ import {
     LogOut,
     User,
     ChevronRight,
-    ClipboardCheck
+    ClipboardCheck,
+    ClockCheck,
 } from "lucide-react";
 
 export default function AdminLayout({ children, header }) {
@@ -30,6 +31,12 @@ export default function AdminLayout({ children, header }) {
             href: route("admin.scenarios.index"),
             icon: Film,
             active: route().current("admin.scenarios.*"),
+        },
+        {
+            name: "Rundown Analytics",
+            href: route("admin.rundown-analytics.index"),
+            icon: ClockCheck,
+            active: route().current("admin.rundown-analytics.*"),
         },
         {
             name: "Master Kategori",
