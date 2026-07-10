@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\ProtocolApiController;
+use App\Http\Controllers\Api\v1\ProtocolApiController;
 use App\Http\Controllers\Api\v1\RundownGeneratorController;
 use Illuminate\Support\Facades\Route;
 
@@ -8,7 +8,7 @@ Route::prefix('v1')->middleware('api.key')->group(function () {
     
     Route::get('/dashboard', [ProtocolApiController::class, 'getDashboard']);
     
-    // Endpoint Pencarian Pintar (Contoh akses: /api/v1/search?q=bupati) cek cek
+    // Endpoint Pencarian Pintar (Contoh akses: /api/v1/search?q=bupati)
     Route::get('/search', [ProtocolApiController::class, 'quickSearch']);
     Route::get('/search-honorifics', [ProtocolApiController::class, 'quickSearchHonorifics']);
 

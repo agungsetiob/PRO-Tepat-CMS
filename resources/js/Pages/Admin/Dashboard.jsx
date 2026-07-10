@@ -38,7 +38,6 @@ export default function Dashboard({
     monthlyData,
 }) {
     const { auth } = usePage().props;
-    // Data untuk grafik aktivitas bulanan
     const activityData = monthlyData || [
         { month: "Jan", scenarios: 4, protocols: 2 },
         { month: "Feb", scenarios: 3, protocols: 3 },
@@ -48,7 +47,6 @@ export default function Dashboard({
         { month: "Jun", scenarios: 4, protocols: 5 },
     ];
 
-    // Warna-warna untuk pie chart
     const COLORS = [
         "#0d9488",
         "#8b5cf6",
@@ -58,7 +56,6 @@ export default function Dashboard({
         "#10b981",
     ];
 
-    // Data untuk distribusi kategori
     const pieData = [
         {
             name: "Tata Tempat",
@@ -77,7 +74,6 @@ export default function Dashboard({
         },
     ];
 
-    // Statistik cards dengan icon dan gradient
     const statCards = [
         {
             title: "Total Kategori",
@@ -121,7 +117,6 @@ export default function Dashboard({
         },
     ];
 
-    // Statistik tambahan (tanpa trend/change)
     const additionalStats = [
         {
             label: "Total Protocols",
@@ -167,7 +162,6 @@ export default function Dashboard({
         return null;
     };
 
-    // Custom render label untuk pie chart
     const renderCustomizedLabel = ({
         name,
         percent,
@@ -578,6 +572,30 @@ export default function Dashboard({
                             >
                                 <span className="text-sm font-medium text-slate-700 group-hover:text-teal-700">
                                     Kelola Skenario
+                                </span>
+                                <ArrowRight
+                                    size={16}
+                                    className="text-slate-400 group-hover:text-teal-600"
+                                />
+                            </Link>
+                            <Link
+                                href={route("admin.master-agenda.index")}
+                                className="flex items-center justify-between p-3 bg-slate-50 hover:bg-teal-50 rounded-xl transition-all duration-200 group"
+                            >
+                                <span className="text-sm font-medium text-slate-700 group-hover:text-teal-700">
+                                    Kelola Master Agenda
+                                </span>
+                                <ArrowRight
+                                    size={16}
+                                    className="text-slate-400 group-hover:text-teal-600"
+                                />
+                            </Link>
+                            <Link
+                                href={route("admin.rundown-analytics.index")}
+                                className="flex items-center justify-between p-3 bg-slate-50 hover:bg-teal-50 rounded-xl transition-all duration-200 group"
+                            >
+                                <span className="text-sm font-medium text-slate-700 group-hover:text-teal-700">
+                                    List Rundown
                                 </span>
                                 <ArrowRight
                                     size={16}

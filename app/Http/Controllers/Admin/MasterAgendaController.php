@@ -7,14 +7,14 @@ use App\Models\MasterAgenda;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class MasterAgendaCmsController extends Controller
+class MasterAgendaController extends Controller
 {
     /**
      * Menampilkan halaman daftar master agenda via Inertia React
      */
     public function index()
     {
-        $agendas = MasterAgenda::orderBy('order', 'asc')->get();
+        $agendas = MasterAgenda::orderBy('order', 'asc')->paginate(10);
         
         return Inertia::render('Admin/MasterAgenda/Index', [
             'agendas' => $agendas

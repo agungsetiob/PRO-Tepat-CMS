@@ -4,8 +4,8 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\HonorificController;
 use App\Http\Controllers\Admin\ScenarioController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\MasterAgendaCmsController;
-use App\Http\Controllers\Admin\RundownAnalyticsCmsController;
+use App\Http\Controllers\Admin\MasterAgendaController;
+use App\Http\Controllers\Admin\RundownAnalyticsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -35,13 +35,13 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('scenarios/{scenario}/materi/tempat', [ScenarioController::class, 'simpanMateriTempat'])->name('scenarios.materi.tempat');
     Route::post('scenarios/{scenario}/materi/acara', [ScenarioController::class, 'simpanMateriAcara'])->name('scenarios.materi.acara');
 
-    Route::get('/master-agenda', [MasterAgendaCmsController::class, 'index'])->name('master-agenda.index');
-    Route::post('/master-agenda', [MasterAgendaCmsController::class, 'store'])->name('master-agenda.store');
-    Route::put('/master-agenda/{id}', [MasterAgendaCmsController::class, 'update'])->name('master-agenda.update');
-    Route::delete('/master-agenda/{id}', [MasterAgendaCmsController::class, 'destroy'])->name('master-agenda.destroy');
+    Route::get('/master-agenda', [MasterAgendaController::class, 'index'])->name('master-agenda.index');
+    Route::post('/master-agenda', [MasterAgendaController::class, 'store'])->name('master-agenda.store');
+    Route::put('/master-agenda/{id}', [MasterAgendaController::class, 'update'])->name('master-agenda.update');
+    Route::delete('/master-agenda/{id}', [MasterAgendaController::class, 'destroy'])->name('master-agenda.destroy');
 
-    Route::get('/rundown-analytics', [RundownAnalyticsCmsController::class, 'index'])->name('rundown-analytics.index');
-    Route::delete('/rundown-analytics/{id}', [RundownAnalyticsCmsController::class, 'destroy'])->name('rundown-analytics.destroy');
+    Route::get('/rundown-analytics', [RundownAnalyticsController::class, 'index'])->name('rundown-analytics.index');
+    Route::delete('/rundown-analytics/{id}', [RundownAnalyticsController::class, 'destroy'])->name('rundown-analytics.destroy');
 });
 
 require __DIR__ . '/auth.php';

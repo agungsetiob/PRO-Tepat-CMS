@@ -11,6 +11,8 @@ import {
     CheckCircle,
     Clock,
     Layers,
+    ChevronLeft,
+    ChevronRight,
 } from "lucide-react";
 
 export default function Index({ stats, rundowns }) {
@@ -25,6 +27,12 @@ export default function Index({ stats, rundowns }) {
                 onFinish: () => setProcessingId(null),
             });
         }
+    };
+
+    // Fungsi untuk berpindah halaman menggunakan router.get
+    const handlePageChange = (page) => {
+        if (page < 1 || page > rundowns.last_page) return;
+        router.get(route("admin.rundown-analytics.index", { page: page }));
     };
 
     // Kalkulasi nilai maksimal untuk skala persentase grafik batang mini
@@ -74,7 +82,7 @@ export default function Index({ stats, rundowns }) {
                     <p className="text-xs text-indigo-100/80 mt-4 font-medium">Dokumen rundown baru yang digenerate bulan ini</p>
                 </div>
 
-                {/* Card 3: Rata-rata Kompleksitas */}
+                {/* Card 3: Status Keaktifan App */}
                 <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-md p-6 text-white">
                     <div className="flex items-center justify-between">
                         <div>
@@ -190,29 +198,139 @@ export default function Index({ stats, rundowns }) {
                             ))}
                             {rundowns.data.length === 0 && (
                                 <tr>
-                                    <td colspan="6" class="text-center text-slate-400 py-12 italic">Belum ada rekaman rundown yang masuk dari perangkat mobile.</td>
+                                    <td colSpan="6" className="text-center text-slate-400 py-12 italic">Belum ada rekaman rundown yang masuk dari perangkat mobile.</td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
                 </div>
 
-                {/* Paginasi Inertia */}
-                {rundowns.links && rundowns.links.length > 3 && (
-                    <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-center gap-1">
-                        {rundowns.links.map((link, i) => (
-                            <button
-                                key={i}
-                                disabled={!link.url || link.active}
-                                onClick={() => router.get(link.url)}
-                                dangerouslySetInnerHTML={{ __html: link.label }}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-                                    link.active 
-                                        ? "bg-purple-600 text-white border-purple-600" 
-                                        : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
-                                } ${!link.url && "opacity-40 cursor-not-allowed"}`}
-                            />
-                        ))}
+                {/* Pagination Component – gaya sama seperti master-agenda */}
+                {rundowns.last_page > 1 && (
+                    <div className="px-6 py-4 border-t border-slate-200 bg-slate-50">
+                        <div className="flex items-center justify-between flex-wrap gap-4">
+                            <div className="text-sm text-slate-600">
+                                Menampilkan{" "}
+                                <span className="font-semibold text-slate-800">
+                                    {rundowns.from || 0}
+                                </span>{" "}
+                                -{" "}
+                                <span className="font-semibold text-slate-800">
+                                    {rundowns.to || 0}
+                                </span>{" "}
+                                dari{" "}
+                                <span className="font-semibold text-slate-800">
+                                    {rundowns.total}
+                                </span>{" "}
+                                rundown
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                {/* Tombol Sebelumnya */}
+                                <button
+                                    onClick={() => handlePageChange(rundowns.current_page - 1)}
+                                    disabled={rundowns.current_page === 1}
+                                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                        rundowns.current_page === 1
+                                            ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                                            : "bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300"
+                                    }`}
+                                >
+                                    <ChevronLeft size={16} />
+                                    Sebelumnya
+                                </button>
+
+                                {/* Nomor Halaman */}
+                                <div className="flex items-center gap-1">
+                                    {(() => {
+                                        const pages = [];
+                                        const current = rundowns.current_page;
+                                        const last = rundowns.last_page;
+
+                                        let startPage = Math.max(1, current - 2);
+                                        let endPage = Math.min(last, current + 2);
+
+                                        if (endPage - startPage < 4) {
+                                            if (startPage === 1) {
+                                                endPage = Math.min(last, startPage + 4);
+                                            } else if (endPage === last) {
+                                                startPage = Math.max(1, endPage - 4);
+                                            }
+                                        }
+
+                                        if (startPage > 1) {
+                                            pages.push(
+                                                <button
+                                                    key={1}
+                                                    onClick={() => handlePageChange(1)}
+                                                    className="w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300"
+                                                >
+                                                    1
+                                                </button>
+                                            );
+                                            if (startPage > 2) {
+                                                pages.push(
+                                                    <span key="dots1" className="w-9 h-9 flex items-center justify-center text-slate-400">
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                        }
+
+                                        for (let i = startPage; i <= endPage; i++) {
+                                            pages.push(
+                                                <button
+                                                    key={i}
+                                                    onClick={() => handlePageChange(i)}
+                                                    className={`w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                                        i === rundowns.current_page
+                                                            ? "bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md"
+                                                            : "bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300"
+                                                    }`}
+                                                >
+                                                    {i}
+                                                </button>
+                                            );
+                                        }
+
+                                        if (endPage < last) {
+                                            if (endPage < last - 1) {
+                                                pages.push(
+                                                    <span key="dots2" className="w-9 h-9 flex items-center justify-center text-slate-400">
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                            pages.push(
+                                                <button
+                                                    key={last}
+                                                    onClick={() => handlePageChange(last)}
+                                                    className="w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300"
+                                                >
+                                                    {last}
+                                                </button>
+                                            );
+                                        }
+
+                                        return pages;
+                                    })()}
+                                </div>
+
+                                {/* Tombol Selanjutnya */}
+                                <button
+                                    onClick={() => handlePageChange(rundowns.current_page + 1)}
+                                    disabled={rundowns.current_page === rundowns.last_page}
+                                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                        rundowns.current_page === rundowns.last_page
+                                            ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                                            : "bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300"
+                                    }`}
+                                >
+                                    Selanjutnya
+                                    <ChevronRight size={16} />
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 )}
             </div>

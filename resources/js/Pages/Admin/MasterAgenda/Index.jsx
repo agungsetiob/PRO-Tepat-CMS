@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AdminLayout from "@/Layouts/AdminLayout";
-import { Head, useForm, usePage } from "@inertiajs/react";
+import { Head, useForm, usePage, router } from "@inertiajs/react";
 import {
     Plus,
     Edit,
@@ -12,6 +12,8 @@ import {
     Hash,
     Tag,
     AlertTriangle,
+    ChevronLeft,
+    ChevronRight,
 } from "lucide-react";
 
 export default function Index({ agendas }) {
@@ -88,6 +90,12 @@ export default function Index({ agendas }) {
         }
     };
 
+    // Fungsi untuk berpindah halaman menggunakan router.visit
+    const handlePageChange = (page) => {
+        if (page < 1 || page > agendas.last_page) return;
+        router.visit(route("admin.master-agenda.index", { page: page }));
+    };
+
     return (
         <AdminLayout header="Bank Data Uraian Kegiatan (Rundown)">
             <Head title="Bank Data Agenda" />
@@ -116,7 +124,7 @@ export default function Index({ agendas }) {
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-purple-100 text-sm font-medium mb-1">Total Bank Uraian Acara</p>
-                            <p className="text-3xl font-bold">{agendas.length}</p>
+                            <p className="text-3xl font-bold">{agendas.total}</p>
                         </div>
                         <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
                             <FileText size={24} className="text-white" />
@@ -167,37 +175,174 @@ export default function Index({ agendas }) {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
-                            {agendas.map((item) => (
-                                <tr key={item.id} className="hover:bg-slate-50/60 transition-all duration-200">
-                                    <td className="py-4 px-6 text-center">
-                                        <div className="inline-flex items-center justify-center w-8 h-8 bg-purple-50 text-purple-700 font-bold rounded-lg">
-                                            {item.order}
-                                        </div>
-                                    </td>
-                                    <td className="py-4 px-6">
-                                        <p className="font-semibold text-slate-800 text-base">{item.name}</p>
-                                    </td>
-                                    <td className="py-4 px-6">
-                                        <div className="flex items-center justify-center gap-2">
-                                            <button
-                                                onClick={() => openEditModal(item)}
-                                                className="p-2 text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg"
-                                            >
-                                                <Edit size={16} />
-                                            </button>
-                                            <button
-                                                onClick={() => openDeleteModal(item)}
-                                                className="p-2 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-lg"
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        </div>
+                            {agendas.data.length ? (
+                                agendas.data.map((item) => (
+                                    <tr key={item.id} className="hover:bg-slate-50/60 transition-all duration-200">
+                                        <td className="py-4 px-6 text-center">
+                                            <div className="inline-flex items-center justify-center w-8 h-8 bg-purple-50 text-purple-700 font-bold rounded-lg">
+                                                {item.order}
+                                            </div>
+                                        </td>
+                                        <td className="py-4 px-6">
+                                            <p className="font-semibold text-slate-800 text-base">{item.name}</p>
+                                        </td>
+                                        <td className="py-4 px-6">
+                                            <div className="flex items-center justify-center gap-2">
+                                                <button
+                                                    onClick={() => openEditModal(item)}
+                                                    className="p-2 text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg"
+                                                >
+                                                    <Edit size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => openDeleteModal(item)}
+                                                    className="p-2 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-lg"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="3" className="py-8 text-center text-slate-400">
+                                        Belum ada data agenda.
                                     </td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </table>
                 </div>
+
+                {/* Pagination Component – gaya sesuai permintaan */}
+                {agendas.last_page > 1 && (
+                    <div className="px-6 py-4 border-t border-slate-200 bg-slate-50">
+                        <div className="flex items-center justify-between flex-wrap gap-4">
+                            <div className="text-sm text-slate-600">
+                                Menampilkan{" "}
+                                <span className="font-semibold text-slate-800">
+                                    {agendas.from || 0}
+                                </span>{" "}
+                                -{" "}
+                                <span className="font-semibold text-slate-800">
+                                    {agendas.to || 0}
+                                </span>{" "}
+                                dari{" "}
+                                <span className="font-semibold text-slate-800">
+                                    {agendas.total}
+                                </span>{" "}
+                                data
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                {/* Tombol Sebelumnya */}
+                                <button
+                                    onClick={() => handlePageChange(agendas.current_page - 1)}
+                                    disabled={agendas.current_page === 1}
+                                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                        agendas.current_page === 1
+                                            ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                                            : "bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300"
+                                    }`}
+                                >
+                                    <ChevronLeft size={16} />
+                                    Sebelumnya
+                                </button>
+
+                                {/* Nomor Halaman (generated secara manual) */}
+                                <div className="flex items-center gap-1">
+                                    {(() => {
+                                        const pages = [];
+                                        const current = agendas.current_page;
+                                        const last = agendas.last_page;
+
+                                        let startPage = Math.max(1, current - 2);
+                                        let endPage = Math.min(last, current + 2);
+
+                                        if (endPage - startPage < 4) {
+                                            if (startPage === 1) {
+                                                endPage = Math.min(last, startPage + 4);
+                                            } else if (endPage === last) {
+                                                startPage = Math.max(1, endPage - 4);
+                                            }
+                                        }
+
+                                        if (startPage > 1) {
+                                            pages.push(
+                                                <button
+                                                    key={1}
+                                                    onClick={() => handlePageChange(1)}
+                                                    className="w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300"
+                                                >
+                                                    1
+                                                </button>
+                                            );
+                                            if (startPage > 2) {
+                                                pages.push(
+                                                    <span key="dots1" className="w-9 h-9 flex items-center justify-center text-slate-400">
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                        }
+
+                                        for (let i = startPage; i <= endPage; i++) {
+                                            pages.push(
+                                                <button
+                                                    key={i}
+                                                    onClick={() => handlePageChange(i)}
+                                                    className={`w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 ${
+                                                        i === agendas.current_page
+                                                            ? "bg-gradient-to-r from-teal-600 to-cyan-600 text-white shadow-md"
+                                                            : "bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300"
+                                                    }`}
+                                                >
+                                                    {i}
+                                                </button>
+                                            );
+                                        }
+
+                                        if (endPage < last) {
+                                            if (endPage < last - 1) {
+                                                pages.push(
+                                                    <span key="dots2" className="w-9 h-9 flex items-center justify-center text-slate-400">
+                                                        ...
+                                                    </span>
+                                                );
+                                            }
+                                            pages.push(
+                                                <button
+                                                    key={last}
+                                                    onClick={() => handlePageChange(last)}
+                                                    className="w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200 bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300"
+                                                >
+                                                    {last}
+                                                </button>
+                                            );
+                                        }
+
+                                        return pages;
+                                    })()}
+                                </div>
+
+                                {/* Tombol Selanjutnya */}
+                                <button
+                                    onClick={() => handlePageChange(agendas.current_page + 1)}
+                                    disabled={agendas.current_page === agendas.last_page}
+                                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1 ${
+                                        agendas.current_page === agendas.last_page
+                                            ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                                            : "bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-600 border border-slate-200 hover:border-teal-300"
+                                    }`}
+                                >
+                                    Selanjutnya
+                                    <ChevronRight size={16} />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Modal Input Create / Edit */}
