@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\ProtocolApiController;
 use App\Http\Controllers\Api\v1\RundownGeneratorController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->group(function () {
+Route::prefix('v1')->middleware('api.key')->group(function () {
     
     Route::get('/dashboard', [ProtocolApiController::class, 'getDashboard']);
     
