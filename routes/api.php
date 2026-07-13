@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\v1\ManualBookApiController;
 use App\Http\Controllers\Api\v1\ProtocolApiController;
 use App\Http\Controllers\Api\v1\RundownGeneratorController;
 use Illuminate\Support\Facades\Route;
@@ -22,5 +23,9 @@ Route::prefix('v1')->middleware('api.key')->group(function () {
 
     Route::get('/master-agendas', [RundownGeneratorController::class, 'getMasterAgendas']);
     Route::post('/rundowns', [RundownGeneratorController::class, 'store']);
+
+    Route::get('manual-books', [ManualBookApiController::class, 'index']);
+    Route::get('manual-books/{id}', [ManualBookApiController::class, 'show']);
+    Route::get('manual-books/{id}/download', [ManualBookApiController::class, 'download']);
     
 });

@@ -12,6 +12,7 @@ import {
     ChevronRight,
     ClipboardCheck,
     ClockCheck,
+    FileText,
 } from "lucide-react";
 
 export default function AdminLayout({ children, header }) {
@@ -55,6 +56,12 @@ export default function AdminLayout({ children, header }) {
             href: route("admin.master-agenda.index"),
             icon: ClipboardCheck,
             active: route().current("admin.master-agenda.*"),
+        },
+        {
+            name: "Manual Book",
+            href: route("admin.manual-book.index"),
+            icon: FileText,
+            active: route().current("admin.manual-book.*"),
         },
     ];
 

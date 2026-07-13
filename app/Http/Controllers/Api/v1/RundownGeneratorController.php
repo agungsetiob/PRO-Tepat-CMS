@@ -22,7 +22,7 @@ class RundownGeneratorController extends Controller
             $agendas = MasterAgenda::where('is_active', true)
                 ->orderBy('order', 'asc')
                 ->orderBy('name', 'asc')
-                ->get(['id', 'name']); // Ambil id dan nama saja agar payload ringan
+                ->get(['id', 'name']);
 
             return response()->json([
                 'success' => true,
