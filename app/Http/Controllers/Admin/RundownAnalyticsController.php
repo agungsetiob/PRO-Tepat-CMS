@@ -48,6 +48,6 @@ class RundownAnalyticsController extends Controller
         $rundown = GeneratedRundown::findOrFail($id);
         $rundown->delete();
 
-        return redirect()->back()->with('success', 'Rekam jejak rundown berhasil dihapus dari CMS.');
+        return redirect()->back()->with('message', 'Rekam jejak rundown berhasil dihapus.');
     }
 }

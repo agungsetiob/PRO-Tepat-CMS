@@ -13,20 +13,37 @@ import {
     Layers,
     ChevronLeft,
     ChevronRight,
+    AlertTriangle, // <-- tambahan
 } from "lucide-react";
 
 export default function Index({ stats, rundowns }) {
     const { flash } = usePage().props;
     const [processingId, setProcessingId] = useState(null);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [selectedRundown, setSelectedRundown] = useState(null);
 
-    const handleDelete = (id) => {
-        if (confirm("Apakah Anda yakin ingin menghapus rekam jejak rundown ini dari server?")) {
-            setProcessingId(id);
-            router.delete(route("admin.rundown-analytics.destroy", id), {
-                onSuccess: () => setProcessingId(null),
-                onFinish: () => setProcessingId(null),
-            });
-        }
+    // Fungsi untuk membuka modal konfirmasi
+    const confirmDelete = (rundown) => {
+        setSelectedRundown(rundown);
+        setIsDeleteModalOpen(true);
+    };
+
+    // Fungsi untuk benar-benar menghapus setelah konfirmasi
+    const handleDeleteConfirmed = () => {
+        if (!selectedRundown) return;
+        setProcessingId(selectedRundown.id);
+        router.delete(route("admin.rundown-analytics.destroy", selectedRundown.id), {
+            onSuccess: () => {
+                setProcessingId(null);
+                setIsDeleteModalOpen(false);
+                setSelectedRundown(null);
+            },
+            onFinish: () => {
+                setProcessingId(null);
+                setIsDeleteModalOpen(false);
+                setSelectedRundown(null);
+            },
+        });
     };
 
     // Fungsi untuk berpindah halaman menggunakan router.get
@@ -48,6 +65,45 @@ export default function Index({ stats, rundowns }) {
                     <div className="flex items-center gap-2">
                         <CheckCircle size={20} />
                         <p className="text-sm font-medium">{flash.success}</p>
+                    </div>
+                </div>
+            )}
+
+            {/* MODAL KONFIRMASI HAPUS */}
+            {isDeleteModalOpen && selectedRundown && (
+                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+                        <div className="p-6 text-center">
+                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <AlertTriangle size={32} className="text-red-600" />
+                            </div>
+                            <h3 className="text-lg font-bold text-slate-800 mb-2">Hapus Rekam Jejak Rundown?</h3>
+                            <p className="text-slate-500 text-sm mb-4">
+                                Menghapus rundown{" "}
+                                <span className="font-semibold text-slate-700">
+                                    "{selectedRundown.event_name}"
+                                </span>{" "}
+                                akan menghapus seluruh data rekam jejaknya dari server.
+                            </p>
+                            <div className="flex justify-center gap-3">
+                                <button
+                                    onClick={() => {
+                                        setIsDeleteModalOpen(false);
+                                        setSelectedRundown(null);
+                                    }}
+                                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-medium"
+                                >
+                                    Batal
+                                </button>
+                                <button
+                                    onClick={handleDeleteConfirmed}
+                                    disabled={processingId === selectedRundown?.id}
+                                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-medium shadow-md"
+                                >
+                                    {processingId === selectedRundown?.id ? "Menghapus..." : "Ya, Hapus"}
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
@@ -186,7 +242,7 @@ export default function Index({ stats, rundowns }) {
                                     </td>
                                     <td className="py-4 px-6 text-center">
                                         <button
-                                            onClick={() => handleDelete(item.id)}
+                                            onClick={() => confirmDelete(item)} // <-- ganti panggilan
                                             disabled={processingId === item.id}
                                             className="p-2 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
                                             title="Hapus Rekam Jejak"

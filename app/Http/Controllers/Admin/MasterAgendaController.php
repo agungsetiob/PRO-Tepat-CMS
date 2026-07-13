@@ -38,7 +38,7 @@ class MasterAgendaController extends Controller
         ]);
 
         return redirect()->route('admin.master-agenda.index')
-            ->with('success', 'Uraian kegiatan berhasil ditambahkan ke bank data.');
+            ->with('message', 'Uraian kegiatan berhasil ditambahkan ke bank data.');
     }
 
     /**
@@ -58,7 +58,7 @@ class MasterAgendaController extends Controller
         ]);
 
         return redirect()->route('admin.master-agenda.index')
-            ->with('success', 'Master agenda berhasil diperbarui.');
+            ->with('message', 'Master agenda berhasil diperbarui.');
     }
 
     /**
@@ -71,7 +71,7 @@ class MasterAgendaController extends Controller
             $agenda->delete();
             
             return redirect()->route('admin.master-agenda.index')
-                ->with('success', 'Master agenda berhasil dihapus dari sistem.');
+                ->with('message', 'Master agenda berhasil dihapus dari sistem.');
         } catch (\Exception $e) {
             return redirect()->route('admin.master-agenda.index')
                 ->with('error', 'Gagal menghapus! Data ini terikat dengan susunan rundown yang ada.');
