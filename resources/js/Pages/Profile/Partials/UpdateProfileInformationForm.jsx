@@ -21,7 +21,7 @@ export default function UpdateProfileInformation({
     const submit = (e) => {
         e.preventDefault();
 
-        patch(route('profile.update'));
+        patch(route('admin.profile.update'));
     };
 
     return (
@@ -102,8 +102,8 @@ export default function UpdateProfileInformation({
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-gray-600">
-                            Saved.
+                        <p className="text-sm text-green-600">
+                            Informasi profil berhasil diperbarui.
                         </p>
                     </Transition>
                 </div>

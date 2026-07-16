@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ManualBookController;
 use App\Http\Controllers\Admin\MasterAgendaController;
 use App\Http\Controllers\Admin\RundownAnalyticsController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -45,6 +46,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::delete('/rundown-analytics/{id}', [RundownAnalyticsController::class, 'destroy'])->name('rundown-analytics.destroy');
     Route::resource('manual-book', ManualBookController::class)->except(['show', 'edit', 'create'])->name('manual-book', 'manual-book.index');
     Route::get('manual-book/{id}/download', [ManualBookController::class, 'download'])->name('manual-book.download');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 require __DIR__ . '/auth.php';

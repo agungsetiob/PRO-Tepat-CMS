@@ -137,23 +137,26 @@ export default function AdminLayout({ children, header }) {
                 {/* User Profile */}
                 <div className="p-4 border-t border-slate-700/50 bg-slate-900/30">
                     <div className={`flex items-center gap-3 ${!isSidebarOpen && "justify-center"}`}>
-                        <div className="flex-shrink-0">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center shadow-lg">
-                                <User size={20} className="text-white" />
+                        <Link
+                            href={route("admin.profile.edit")}
+                            className="flex items-center gap-3"
+                        >
+                            <div className="flex-shrink-0">
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center shadow-lg">
+                                    <User size={20} className="text-white" />
+                                </div>
                             </div>
-                        </div>
-                        {isSidebarOpen && (
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-white truncate">
+                            {isSidebarOpen && (
+                                <span className="text-sm font-medium text-white truncate">
                                     {auth.user.name}
-                                </p>
-                            </div>
-                        )}
+                                </span>
+                            )}
+                        </Link>
                         <Link
                             href={route("logout")}
                             method="post"
                             as="button"
-                            className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all duration-200"
+                            className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all duration-200 ml-auto"
                         >
                             <LogOut size={18} />
                         </Link>
@@ -206,12 +209,17 @@ export default function AdminLayout({ children, header }) {
 
                         <div className="p-4 border-t border-slate-700/50">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center">
-                                    <User size={20} className="text-white" />
-                                </div>
-                                <div className="flex-1">
-                                    <p className="text-sm font-medium text-white">{auth.user.name}</p>
-                                </div>
+                                <Link
+                                    href={route("admin.profile.edit")}
+                                    className="flex items-center gap-3 flex-1"
+                                >
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center">
+                                        <User size={20} className="text-white" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-sm font-medium text-white">{auth.user.name}</p>
+                                    </div>
+                                </Link>
                                 <Link
                                     href={route("logout")}
                                     method="post"

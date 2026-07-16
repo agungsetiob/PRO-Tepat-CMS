@@ -18,7 +18,6 @@ import {
     Tag,
 } from "lucide-react";
 
-// Chart components menggunakan recharts
 import {
     LineChart,
     Line,
