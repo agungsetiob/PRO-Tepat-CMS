@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ScenarioController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ManualBookController;
 use App\Http\Controllers\Admin\MasterAgendaController;
+use App\Http\Controllers\Admin\ProtocolPinController;
 use App\Http\Controllers\Admin\RundownAnalyticsController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
@@ -53,6 +54,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::resource('protocol-pins', ProtocolPinController::class)->except(['create', 'edit', 'show']);
 });
 
 require __DIR__ . '/auth.php';

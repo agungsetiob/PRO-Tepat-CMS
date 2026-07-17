@@ -7,6 +7,7 @@ use App\Models\MasterAgenda;
 use App\Models\GeneratedRundown;
 use App\Models\GeneratedRundownItem;
 use App\Models\GeneratedRundownInvitation;
+use App\Models\ProtocolPin;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -235,5 +236,29 @@ class RundownGeneratorController extends Controller
                 'message' => 'Gagal memproses presensi: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function verifyPin(Request $request): JsonResponse
+    {
+        $request->validate([
+            'pin' => 'required|string|size:6',
+        ]);
+
+        // Cek apakah PIN terdaftar dan berstatus aktif di database
+        $isValid = ProtocolPin::where('pin', $request->pin)
+            ->where('is_active', true)
+            ->exists();
+
+        if ($isValid) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Akses Protokol Diterima.'
+            ], 200);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'PIN Protokol Salah atau Sudah Dinonaktifkan!'
+        ], 401);
     }
 }

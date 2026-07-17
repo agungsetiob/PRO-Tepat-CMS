@@ -13,6 +13,7 @@ import {
     ClipboardCheck,
     ClockCheck,
     FileText,
+    Key,
 } from "lucide-react";
 
 export default function AdminLayout({ children, header }) {
@@ -62,6 +63,12 @@ export default function AdminLayout({ children, header }) {
             href: route("admin.manual-book.index"),
             icon: FileText,
             active: route().current("admin.manual-book.*"),
+        },
+        {
+            name: "Pin Protokol",
+            href: route("admin.protocol-pins.index"),
+            icon: Key,
+            active: route().current("admin.protocol-pins.*"),
         },
     ];
 
