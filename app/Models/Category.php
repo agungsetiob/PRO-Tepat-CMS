@@ -11,8 +11,6 @@ class Category extends Model
 {
     public function scenarios(): HasMany 
     {
-        return $this->hasMany(Scenario::class)
-            ->where('is_active', true)
-            ->orderBy('order');
+        return $this->hasMany(Scenario::class);
     }
 }
