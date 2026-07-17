@@ -363,7 +363,7 @@ export default function Index({ scenarios, categories }) {
                                         <td className="py-4 px-6">
                                             {item.thumbnail ? (
                                                 <img
-                                                    src={item.thumbnail}
+                                                    src={`/storage/${item.thumbnail}`}
                                                     alt={item.title}
                                                     className="w-20 h-14 rounded-lg object-cover border-2 border-slate-200 shadow-sm"
                                                 />
@@ -896,7 +896,7 @@ export default function Index({ scenarios, categories }) {
                                         {thumbnailPreview && (
                                             <div className="relative">
                                                 <img
-                                                    src={thumbnailPreview}
+                                                    src={`/storage/${thumbnailPreview}`}
                                                     alt="Preview"
                                                     className="w-16 h-16 rounded-lg object-cover border-2 border-teal-500"
                                                 />

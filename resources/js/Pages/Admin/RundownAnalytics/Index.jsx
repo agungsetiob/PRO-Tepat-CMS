@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AdminLayout from "@/Layouts/AdminLayout";
-import { Head, router, usePage } from "@inertiajs/react";
+import { Head, router, usePage, Link } from "@inertiajs/react";
 import {
     BarChart3,
     Calendar,
@@ -13,7 +13,8 @@ import {
     Layers,
     ChevronLeft,
     ChevronRight,
-    AlertTriangle, // <-- tambahan
+    AlertTriangle,
+    Eye,
 } from "lucide-react";
 
 export default function Index({ stats, rundowns }) {
@@ -241,14 +242,23 @@ export default function Index({ stats, rundowns }) {
                                         </div>
                                     </td>
                                     <td className="py-4 px-6 text-center">
-                                        <button
-                                            onClick={() => confirmDelete(item)} // <-- ganti panggilan
-                                            disabled={processingId === item.id}
-                                            className="p-2 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
-                                            title="Hapus Rekam Jejak"
-                                        >
-                                            <Trash2 size={15} />
-                                        </button>
+                                        <div className="flex items-center justify-center gap-2">
+                                            <Link
+                                                href={route("admin.rundown-analytics.show", item.id)}
+                                                className="p-2 text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+                                                title="Lihat Detail"
+                                            >
+                                                <Eye size={15} />
+                                            </Link>
+                                            <button
+                                                onClick={() => confirmDelete(item)}
+                                                disabled={processingId === item.id}
+                                                className="p-2 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+                                                title="Hapus Rekam Jejak"
+                                            >
+                                                <Trash2 size={15} />
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}

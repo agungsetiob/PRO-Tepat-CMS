@@ -382,7 +382,7 @@ export default function MateriTempat({ scenario, protocol, honorifics }) {
                                                         </button>
                                                     </div>
                                                     <img 
-                                                        src={imagePreview} 
+                                                        src={`/storage/${imagePreview}`} 
                                                         alt="Denah" 
                                                         className="max-h-64 rounded-lg border border-slate-200 object-contain mx-auto"
                                                     />

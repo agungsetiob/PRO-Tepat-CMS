@@ -23,6 +23,9 @@ Route::prefix('v1')->middleware('api.key')->group(function () {
 
     Route::get('/master-agendas', [RundownGeneratorController::class, 'getMasterAgendas']);
     Route::post('/rundowns', [RundownGeneratorController::class, 'store']);
+    Route::get('/generated-rundowns', [RundownGeneratorController::class, 'getRundownsList']);
+    Route::get('/generated-rundowns/{id}', [RundownGeneratorController::class, 'getRundownDetail']);
+    Route::post('/invitations/{id}/presence', [RundownGeneratorController::class, 'updatePresence']);
 
     Route::get('manual-books', [ManualBookApiController::class, 'index']);
     Route::get('manual-books/{id}', [ManualBookApiController::class, 'show']);

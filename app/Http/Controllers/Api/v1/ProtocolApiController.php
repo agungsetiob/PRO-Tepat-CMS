@@ -100,7 +100,7 @@ class ProtocolApiController extends Controller
             'last_page' => $scenarios->lastPage(),
             'total' => $scenarios->total(),
             'has_more' => $scenarios->hasMorePages(),
-            'data' => $scenarios->items() // Memisahkan payload data murni dari meta pagination standard
+            'data' => $scenarios->items()
         ], 200);
     }
 

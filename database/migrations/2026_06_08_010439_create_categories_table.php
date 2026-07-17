@@ -7,7 +7,7 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // TATA TEMPAT, TATA ACARA, TATA PENGHORMATAN
+            $table->string('name');
             $table->string('slug')->unique();
             $table->string('icon')->nullable();
             $table->enum('type', ['tempat', 'acara', 'hormat']);

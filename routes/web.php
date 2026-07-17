@@ -44,6 +44,9 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     Route::get('/rundown-analytics', [RundownAnalyticsController::class, 'index'])->name('rundown-analytics.index');
     Route::delete('/rundown-analytics/{id}', [RundownAnalyticsController::class, 'destroy'])->name('rundown-analytics.destroy');
+    Route::get('/admin/rundown-analytics/{id}', [RundownAnalyticsController::class, 'show'])->name('rundown-analytics.show');
+    Route::get('/admin/rundown-analytics/{id}/print', [RundownAnalyticsController::class, 'print'])->name('rundown-analytics.print');
+
     Route::resource('manual-book', ManualBookController::class)->except(['show', 'edit', 'create'])->name('manual-book', 'manual-book.index');
     Route::get('manual-book/{id}/download', [ManualBookController::class, 'download'])->name('manual-book.download');
 

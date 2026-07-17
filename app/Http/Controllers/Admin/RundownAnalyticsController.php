@@ -14,7 +14,7 @@ class RundownAnalyticsController extends Controller
     {
         $totalRundown = GeneratedRundown::count();
         $totalAcaraBulanIni = GeneratedRundown::whereMonth('date', date('m'))->whereYear('date', date('Y'))->count();
-        
+
         $topLocations = GeneratedRundown::select('location', DB::raw('count(*) as total'))
             ->groupBy('location')
             ->orderBy('total', 'desc')
@@ -49,5 +49,29 @@ class RundownAnalyticsController extends Controller
         $rundown->delete();
 
         return redirect()->back()->with('message', 'Rekam jejak rundown berhasil dihapus.');
+    }
+
+    public function show($id)
+    {
+        $rundown = GeneratedRundown::with([
+            'items.masterAgenda',
+            'invitations.honorific'
+        ])->findOrFail($id);
+
+        return Inertia::render('Admin/RundownAnalytics/Show', [
+            'rundown' => $rundown
+        ]);
+    }
+
+    public function print($id)
+    {
+        $rundown = GeneratedRundown::with([
+            'items.masterAgenda',
+            'invitations.honorific'
+        ])->findOrFail($id);
+
+        return Inertia::render('Admin/RundownAnalytics/Print', [
+            'rundown' => $rundown
+        ]);
     }
 }

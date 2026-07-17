@@ -40,23 +40,22 @@ class ScenarioController extends Controller
             'order' => 'required|integer',
             'is_active' => 'required|boolean',
             'thumbnail' => 'nullable|image|max:2048',
-            'tags' => 'nullable|string', // Diinput dipisah koma: "mobil, wabup, bupati"
+            'tags' => 'nullable|string',
         ]);
 
         $validated['slug'] = Str::slug($validated['title']) . '-' . rand(100, 999);
 
         if ($request->hasFile('thumbnail')) {
             $path = $request->file('thumbnail')->store('thumbnails', 'public');
-            $validated['thumbnail'] = Storage::url($path);
+            // Simpan path relatif tanpa /storage
+            $validated['thumbnail'] = $path;
         }
 
         $scenario = Scenario::create($validated);
 
-        // Handle Polymorphic Tags
         if (!empty($request->tags)) {
             $tagIds = [];
-            $tagNames = explode(',', $request->tags);
-            foreach ($tagNames as $name) {
+            foreach (explode(',', $request->tags) as $name) {
                 $trimmed = trim($name);
                 if ($trimmed !== '') {
                     $tag = Tag::firstOrCreate(
@@ -90,19 +89,17 @@ class ScenarioController extends Controller
 
         if ($request->hasFile('thumbnail')) {
             if ($scenario->thumbnail) {
-                $oldPath = str_replace('/storage/', '', $scenario->thumbnail);
-                Storage::disk('public')->delete($oldPath);
+                Storage::disk('public')->delete($scenario->thumbnail);
             }
 
             $path = $request->file('thumbnail')->store('thumbnails', 'public');
-            $validated['thumbnail'] = Storage::url($path);
+            $validated['thumbnail'] = $path;
         } else {
             unset($validated['thumbnail']);
         }
 
         $scenario->update($validated);
 
-        // Sync Tags
         if ($request->filled('tags')) {
             $tagIds = [];
             foreach (explode(',', $request->tags) as $name) {
@@ -123,14 +120,15 @@ class ScenarioController extends Controller
         return redirect()->back()->with('message', 'Skenario berhasil diperbarui.');
     }
 
+
     public function destroy(Scenario $scenario)
     {
         if ($scenario->thumbnail) {
-            $oldPath = str_replace('/storage/', '', $scenario->thumbnail);
-            Storage::disk('public')->delete($oldPath);
+            // Sekarang di DB sudah simpan path relatif, jadi langsung delete
+            Storage::disk('public')->delete($scenario->thumbnail);
         }
 
-        $scenario->delete(); // Cascade delete otomatis menghapus data anak karena foreignId constrained
+        $scenario->delete(); // Cascade delete otomatis
         return redirect()->back()->with('message', 'Skenario berhasil dihapus.');
     }
 
@@ -139,12 +137,11 @@ class ScenarioController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
-            'image_infographic' => 'nullable|image|max:3072', // Maks 3MB untuk denah HD
+            'image_infographic' => 'nullable|image|max:3072',
             'references' => 'nullable|array',
-            'seating_rules' => 'nullable|array', // Array dari susunan kursi
+            'seating_rules' => 'nullable|array',
         ]);
 
-        // 1. Cari atau buat baru data Protocol
         $protocol = Protocol::firstOrNew(['scenario_id' => $scenario->id]);
         $protocol->title = $validated['title'];
         $protocol->content = $validated['content'];
@@ -152,16 +149,17 @@ class ScenarioController extends Controller
 
         if ($request->hasFile('image_infographic')) {
             if ($protocol->image_infographic) {
-                Storage::disk('public')->delete(str_replace('/storage/', '', $protocol->image_infographic));
+                Storage::disk('public')->delete($protocol->image_infographic);
             }
             $path = $request->file('image_infographic')->store('infographics', 'public');
-            $protocol->image_infographic = Storage::url($path);
+            // Simpan path relatif
+            $protocol->image_infographic = $path;
         }
+
         $protocol->save();
 
-        // 2. Refresh susunan Seating Rules (Hapus yang lama, ganti yang baru)
+        // Refresh seating rules
         $protocol->seatingRules()->delete();
-
         if (!empty($validated['seating_rules'])) {
             foreach ($validated['seating_rules'] as $index => $rule) {
                 if (!empty($rule['position_label'])) {

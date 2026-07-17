@@ -10,7 +10,6 @@ class GeneratedRundown extends Model
 {
     use HasFactory;
 
-    // Daftarkan field yang boleh diisi massal dari API mobile
     protected $fillable = ['event_name', 'date', 'time_info', 'location', 'pic'];
 
     /**
@@ -18,7 +17,11 @@ class GeneratedRundown extends Model
      */
     public function items(): HasMany
     {
-        // Diurutkan berdasarkan sort_order agar baris rundown rapi berurutan saat ditarik
         return $this->hasMany(GeneratedRundownItem::class)->orderBy('sort_order', 'asc');
+    }
+
+    public function invitations()
+    {
+        return $this->hasMany(GeneratedRundownInvitation::class)->orderBy('sort_order', 'asc');
     }
 }
