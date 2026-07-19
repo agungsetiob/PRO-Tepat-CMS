@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1;
 
+use Illuminate\Support\Facades\RateLimiter;
 use App\Http\Controllers\Controller;
 use App\Models\MasterAgenda;
 use App\Models\GeneratedRundown;
@@ -244,17 +245,34 @@ class RundownGeneratorController extends Controller
             'pin' => 'required|string|size:6',
         ]);
 
-        // Cek apakah PIN terdaftar dan berstatus aktif di database
+        $throttleKey = 'verify-pin:' . $request->ip();
+
+        // 1. CEK LIMITER: Maksimal 5 kali percobaan salah
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            return response()->json([
+                'success' => false,
+                'message' => "Terlalu banyak percobaan. Tunggu $seconds detik."
+            ], 429);
+        }
+
+        // 2. Cek apakah PIN terdaftar dan berstatus aktif di database
         $isValid = ProtocolPin::where('pin', $request->pin)
             ->where('is_active', true)
             ->exists();
 
         if ($isValid) {
+            // 3. JIKA SUKSES: Hapus riwayat kesalahan untuk IP ini
+            RateLimiter::clear($throttleKey);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Akses Protokol Diterima.'
             ], 200);
         }
+
+        // 4. JIKA GAGAL: Catat percobaan salah ini
+        RateLimiter::hit($throttleKey, 60);
 
         return response()->json([
             'success' => false,

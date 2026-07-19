@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\VerifyApiSignature;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -21,6 +22,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'api.key' => ApiKeyMiddleware::class,
+            'api.signature' => VerifyApiSignature::class,
+            'api.pin' => \App\Http\Middleware\EnsurePinIsValid::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
