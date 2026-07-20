@@ -5,16 +5,16 @@ import {
     Plus,
     Edit,
     Trash2,
-    X,
     CheckCircle,
     AlertCircle,
     FileText,
     Hash,
     Tag,
-    AlertTriangle,
     ChevronLeft,
     ChevronRight,
 } from "lucide-react";
+import AgendaFormModal from "./Partials/AgendaFormModal";
+import DeleteConfirmationModal from "./Partials/DeleteConfirmationModal";
 
 export default function Index({ agendas }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,7 +23,6 @@ export default function Index({ agendas }) {
     const [selectedAgenda, setSelectedAgenda] = useState(null);
     const { flash } = usePage().props;
 
-    // Inertia useForm Hook
     const {
         data,
         setData,
@@ -90,7 +89,6 @@ export default function Index({ agendas }) {
         }
     };
 
-    // Fungsi untuk berpindah halaman menggunakan router.visit
     const handlePageChange = (page) => {
         if (page < 1 || page > agendas.last_page) return;
         router.visit(route("admin.master-agenda.index", { page: page }));
@@ -100,7 +98,7 @@ export default function Index({ agendas }) {
         <AdminLayout header="Bank Data Uraian Kegiatan (Rundown)">
             <Head title="Bank Data Agenda" />
 
-            {/* Flash Messages Notifications */}
+            {/* Flash Messages */}
             {flash?.error && (
                 <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-lg shadow-sm">
                     <div className="flex items-center gap-2">
@@ -118,7 +116,7 @@ export default function Index({ agendas }) {
                 </div>
             )}
 
-            {/* Stats Overview */}
+            {/* Stats */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div className="bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl shadow-lg p-5 text-white">
                     <div className="flex items-center justify-between">
@@ -134,7 +132,7 @@ export default function Index({ agendas }) {
                 </div>
             </div>
 
-            {/* Table Core Wrapper */}
+            {/* Table */}
             <div className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
                 <div className="p-6 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
@@ -190,13 +188,13 @@ export default function Index({ agendas }) {
                                             <div className="flex items-center justify-center gap-2">
                                                 <button
                                                     onClick={() => openEditModal(item)}
-                                                    className="p-2 text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg"
+                                                    className="p-2 text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg transition-all duration-200"
                                                 >
                                                     <Edit size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => openDeleteModal(item)}
-                                                    className="p-2 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-lg"
+                                                    className="p-2 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-all duration-200"
                                                 >
                                                     <Trash2 size={16} />
                                                 </button>
@@ -215,28 +213,18 @@ export default function Index({ agendas }) {
                     </table>
                 </div>
 
-                {/* Pagination Component – gaya sesuai permintaan */}
+                {/* Pagination */}
                 {agendas.last_page > 1 && (
                     <div className="px-6 py-4 border-t border-slate-200 bg-slate-50">
                         <div className="flex items-center justify-between flex-wrap gap-4">
                             <div className="text-sm text-slate-600">
                                 Menampilkan{" "}
-                                <span className="font-semibold text-slate-800">
-                                    {agendas.from || 0}
-                                </span>{" "}
-                                -{" "}
-                                <span className="font-semibold text-slate-800">
-                                    {agendas.to || 0}
-                                </span>{" "}
-                                dari{" "}
-                                <span className="font-semibold text-slate-800">
-                                    {agendas.total}
-                                </span>{" "}
-                                data
+                                <span className="font-semibold text-slate-800">{agendas.from || 0}</span> -{" "}
+                                <span className="font-semibold text-slate-800">{agendas.to || 0}</span> dari{" "}
+                                <span className="font-semibold text-slate-800">{agendas.total}</span> data
                             </div>
 
                             <div className="flex items-center gap-2">
-                                {/* Tombol Sebelumnya */}
                                 <button
                                     onClick={() => handlePageChange(agendas.current_page - 1)}
                                     disabled={agendas.current_page === 1}
@@ -250,7 +238,6 @@ export default function Index({ agendas }) {
                                     Sebelumnya
                                 </button>
 
-                                {/* Nomor Halaman (generated secara manual) */}
                                 <div className="flex items-center gap-1">
                                     {(() => {
                                         const pages = [];
@@ -326,7 +313,6 @@ export default function Index({ agendas }) {
                                     })()}
                                 </div>
 
-                                {/* Tombol Selanjutnya */}
                                 <button
                                     onClick={() => handlePageChange(agendas.current_page + 1)}
                                     disabled={agendas.current_page === agendas.last_page}
@@ -345,101 +331,25 @@ export default function Index({ agendas }) {
                 )}
             </div>
 
-            {/* Modal Input Create / Edit */}
-            {isModalOpen && (
-                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
-                        <div className="px-6 py-5 bg-gradient-to-r from-slate-900 to-slate-800 text-white flex justify-between items-center">
-                            <div>
-                                <h3 className="font-bold text-lg">
-                                    {editMode ? "Ubah Master Agenda" : "Tambah Master Agenda Baru"}
-                                </h3>
-                            </div>
-                            <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-slate-700 rounded-lg">
-                                <X size={20} />
-                            </button>
-                        </div>
+            {/* Modal Components */}
+            <AgendaFormModal
+                show={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                editMode={editMode}
+                data={data}
+                setData={setData}
+                errors={errors}
+                processing={processing}
+                handleSubmit={handleSubmit}
+            />
 
-                        <form onSubmit={handleSubmit} className="p-6 space-y-5">
-                            <div>
-                                <label className="block text-xs font-bold text-slate-700 uppercase mb-2 tracking-wider">
-                                    Nama Uraian Kegiatan <span className="text-red-500">*</span>
-                                </label>
-                                <textarea
-                                    rows="3"
-                                    value={data.name}
-                                    onChange={(e) => setData("name", e.target.value)}
-                                    placeholder="Contoh: Menyanyikan Lagu Kebangsaan Indonesia Raya"
-                                    className="w-full text-sm border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                    autoFocus
-                                />
-                                {errors.name && <p className="text-red-500 text-xs mt-2">{errors.name}</p>}
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-bold text-slate-700 uppercase mb-2 tracking-wider">
-                                    Urutan Urut / Dropdown Order
-                                </label>
-                                <input
-                                    type="number"
-                                    value={data.order}
-                                    onChange={(e) => setData("order", e.target.value)}
-                                    className="w-full text-sm border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-purple-500"
-                                />
-                            </div>
-
-                            <div className="pt-4 border-t border-slate-200 flex justify-end gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="px-5 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 rounded-xl"
-                                >
-                                    Batal
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={processing}
-                                    className="px-5 py-2.5 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-xl shadow-md"
-                                >
-                                    {processing ? "Menyimpan..." : "Simpan Agenda"}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
-
-            {/* Modal Konfirmasi Delete */}
-            {isDeleteModalOpen && selectedAgenda && (
-                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-                        <div className="p-6 text-center">
-                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <AlertTriangle size={32} className="text-red-600" />
-                            </div>
-                            <h3 className="text-lg font-bold text-slate-800 mb-2">Hapus dari Bank Data?</h3>
-                            <p className="text-slate-500 text-sm mb-4">
-                                Menghapus <span className="font-semibold text-slate-700">"{selectedAgenda.name}"</span> akan menghilangkannya dari opsi dropdown beranda mobile.
-                            </p>
-                            <div className="flex justify-center gap-3">
-                                <button
-                                    onClick={() => setIsDeleteModalOpen(false)}
-                                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-medium"
-                                >
-                                    Batal
-                                </button>
-                                <button
-                                    onClick={handleDelete}
-                                    disabled={processing}
-                                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-medium shadow-md"
-                                >
-                                    {processing ? "Menghapus..." : "Ya, Hapus"}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <DeleteConfirmationModal
+                show={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                selectedAgenda={selectedAgenda}
+                processing={processing}
+                handleDelete={handleDelete}
+            />
         </AdminLayout>
     );
 }

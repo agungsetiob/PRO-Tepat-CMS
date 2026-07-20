@@ -13,9 +13,9 @@ import {
     Layers,
     ChevronLeft,
     ChevronRight,
-    AlertTriangle,
     Eye,
 } from "lucide-react";
+import DeleteConfirmationModal from "./Partials/DeleteConfirmationModal";
 
 export default function Index({ stats, rundowns }) {
     const { flash } = usePage().props;
@@ -23,13 +23,11 @@ export default function Index({ stats, rundowns }) {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [selectedRundown, setSelectedRundown] = useState(null);
 
-    // Fungsi untuk membuka modal konfirmasi
     const confirmDelete = (rundown) => {
         setSelectedRundown(rundown);
         setIsDeleteModalOpen(true);
     };
 
-    // Fungsi untuk benar-benar menghapus setelah konfirmasi
     const handleDeleteConfirmed = () => {
         if (!selectedRundown) return;
         setProcessingId(selectedRundown.id);
@@ -47,13 +45,11 @@ export default function Index({ stats, rundowns }) {
         });
     };
 
-    // Fungsi untuk berpindah halaman menggunakan router.get
     const handlePageChange = (page) => {
         if (page < 1 || page > rundowns.last_page) return;
         router.get(route("admin.rundown-analytics.index", { page: page }));
     };
 
-    // Kalkulasi nilai maksimal untuk skala persentase grafik batang mini
     const maxLocCount = Math.max(...stats.top_locations.map(l => l.total), 1);
     const maxPicCount = Math.max(...stats.top_pics.map(p => p.total), 1);
 
@@ -70,48 +66,8 @@ export default function Index({ stats, rundowns }) {
                 </div>
             )}
 
-            {/* MODAL KONFIRMASI HAPUS */}
-            {isDeleteModalOpen && selectedRundown && (
-                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-                        <div className="p-6 text-center">
-                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <AlertTriangle size={32} className="text-red-600" />
-                            </div>
-                            <h3 className="text-lg font-bold text-slate-800 mb-2">Hapus Rekam Jejak Rundown?</h3>
-                            <p className="text-slate-500 text-sm mb-4">
-                                Menghapus rundown{" "}
-                                <span className="font-semibold text-slate-700">
-                                    "{selectedRundown.event_name}"
-                                </span>{" "}
-                                akan menghapus seluruh data rekam jejaknya dari server.
-                            </p>
-                            <div className="flex justify-center gap-3">
-                                <button
-                                    onClick={() => {
-                                        setIsDeleteModalOpen(false);
-                                        setSelectedRundown(null);
-                                    }}
-                                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-medium"
-                                >
-                                    Batal
-                                </button>
-                                <button
-                                    onClick={handleDeleteConfirmed}
-                                    disabled={processingId === selectedRundown?.id}
-                                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-medium shadow-md"
-                                >
-                                    {processingId === selectedRundown?.id ? "Menghapus..." : "Ya, Hapus"}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
             {/* GRID UTAMA STATS CARD */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                {/* Card 1: Total Produksi Rundown */}
                 <div className="bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl shadow-md p-6 text-white">
                     <div className="flex items-center justify-between">
                         <div>
@@ -125,7 +81,6 @@ export default function Index({ stats, rundowns }) {
                     <p className="text-xs text-teal-100/80 mt-4 font-medium">Akumulasi seluruh dokumen rundown yang dicetak via HP</p>
                 </div>
 
-                {/* Card 2: Aktivitas Bulan Ini */}
                 <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-md p-6 text-white">
                     <div className="flex items-center justify-between">
                         <div>
@@ -139,7 +94,6 @@ export default function Index({ stats, rundowns }) {
                     <p className="text-xs text-indigo-100/80 mt-4 font-medium">Dokumen rundown baru yang digenerate bulan ini</p>
                 </div>
 
-                {/* Card 3: Status Keaktifan App */}
                 <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-md p-6 text-white">
                     <div className="flex items-center justify-between">
                         <div>
@@ -157,9 +111,8 @@ export default function Index({ stats, rundowns }) {
                 </div>
             </div>
 
-            {/* SEKSI GRAFIK VISUAL ANALITIK */}
+            {/* GRAFIK VISUAL*/}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                {/* Grafik 1: Top Lokasi Kegiatan */}
                 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                     <h4 className="font-bold text-slate-800 text-base mb-4 flex items-center gap-2">
                         <MapPin size={18} className="text-cyan-600" /> Top Lokasi / Venue Terpilih
@@ -183,7 +136,6 @@ export default function Index({ stats, rundowns }) {
                     </div>
                 </div>
 
-                {/* Grafik 2: Top Pelaksana / PJ */}
                 <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
                     <h4 className="font-bold text-slate-800 text-base mb-4 flex items-center gap-2">
                         <Users size={18} className="text-purple-600" /> Pelaksana / PJ Teraktif
@@ -208,7 +160,7 @@ export default function Index({ stats, rundowns }) {
                 </div>
             </div>
 
-            {/* TABEL DATA REKAM JEJAK UTAMA */}
+            {/* TABEL REKAM JEJAK */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                 <div className="p-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
                     <h3 className="font-bold text-lg text-slate-800 flex items-center gap-2">
@@ -271,7 +223,7 @@ export default function Index({ stats, rundowns }) {
                     </table>
                 </div>
 
-                {/* Pagination Component – gaya sama seperti master-agenda */}
+                {/* Pagination*/}
                 {rundowns.last_page > 1 && (
                     <div className="px-6 py-4 border-t border-slate-200 bg-slate-50">
                         <div className="flex items-center justify-between flex-wrap gap-4">
@@ -292,7 +244,6 @@ export default function Index({ stats, rundowns }) {
                             </div>
 
                             <div className="flex items-center gap-2">
-                                {/* Tombol Sebelumnya */}
                                 <button
                                     onClick={() => handlePageChange(rundowns.current_page - 1)}
                                     disabled={rundowns.current_page === 1}
@@ -306,7 +257,6 @@ export default function Index({ stats, rundowns }) {
                                     Sebelumnya
                                 </button>
 
-                                {/* Nomor Halaman */}
                                 <div className="flex items-center gap-1">
                                     {(() => {
                                         const pages = [];
@@ -382,7 +332,6 @@ export default function Index({ stats, rundowns }) {
                                     })()}
                                 </div>
 
-                                {/* Tombol Selanjutnya */}
                                 <button
                                     onClick={() => handlePageChange(rundowns.current_page + 1)}
                                     disabled={rundowns.current_page === rundowns.last_page}
@@ -400,6 +349,17 @@ export default function Index({ stats, rundowns }) {
                     </div>
                 )}
             </div>
+
+            <DeleteConfirmationModal
+                show={isDeleteModalOpen}
+                onClose={() => {
+                    setIsDeleteModalOpen(false);
+                    setSelectedRundown(null);
+                }}
+                selectedRundown={selectedRundown}
+                processingId={processingId}
+                handleDeleteConfirmed={handleDeleteConfirmed}
+            />
         </AdminLayout>
     );
 }

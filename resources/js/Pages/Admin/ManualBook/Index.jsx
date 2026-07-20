@@ -5,15 +5,15 @@ import {
     Plus,
     Edit,
     Trash2,
-    X,
     CheckCircle,
     AlertCircle,
     FileText,
     Download,
-    AlertTriangle,
     ChevronLeft,
     ChevronRight,
 } from "lucide-react";
+import ManualFormModal from "./Partials/ManualFormModal";
+import DeleteConfirmationModal from "./Partials/DeleteConfirmationModal";
 
 export default function Index({ manualBooks }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,7 +51,7 @@ export default function Index({ manualBooks }) {
             id: item.id,
             title: item.title,
             description: item.description || "",
-            file: null, // tidak menampilkan file lama
+            file: null,
             is_active: item.is_active,
             _method: "PUT",
         });
@@ -67,8 +67,6 @@ export default function Index({ manualBooks }) {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Karena kita menggunakan _method, kita perlu mengatur formData secara manual
-        // untuk menangani upload file.
         const formData = new FormData();
         formData.append("title", data.title);
         formData.append("description", data.description);
@@ -114,7 +112,6 @@ export default function Index({ manualBooks }) {
         window.open(route("admin.manual-book.download", id), "_blank");
     };
 
-    // Pagination
     const handlePageChange = (page) => {
         if (page < 1 || page > manualBooks.last_page) return;
         router.visit(route("admin.manual-book.index", { page }));
@@ -202,20 +199,20 @@ export default function Index({ manualBooks }) {
                                             <div className="flex items-center justify-center gap-2">
                                                 <button
                                                     onClick={() => handleDownload(item.id)}
-                                                    className="p-2 text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg"
+                                                    className="p-2 text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-all duration-200"
                                                     title="Download"
                                                 >
                                                     <Download size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => openEditModal(item)}
-                                                    className="p-2 text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg"
+                                                    className="p-2 text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg transition-all duration-200"
                                                 >
                                                     <Edit size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => openDeleteModal(item)}
-                                                    className="p-2 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-lg"
+                                                    className="p-2 text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-lg transition-all duration-200"
                                                 >
                                                     <Trash2 size={16} />
                                                 </button>
@@ -352,128 +349,25 @@ export default function Index({ manualBooks }) {
                 )}
             </div>
 
-            {/* Modal Create / Edit */}
-            {isModalOpen && (
-                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
-                        <div className="px-6 py-5 bg-gradient-to-r from-slate-900 to-slate-800 text-white flex justify-between items-center">
-                            <div>
-                                <h3 className="font-bold text-lg">
-                                    {editMode ? "Edit Manual Book" : "Upload Manual Book Baru"}
-                                </h3>
-                            </div>
-                            <button onClick={() => setIsModalOpen(false)} className="p-2 hover:bg-slate-700 rounded-lg">
-                                <X size={20} />
-                            </button>
-                        </div>
+            {/* Modal Components */}
+            <ManualFormModal
+                show={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                editMode={editMode}
+                data={data}
+                setData={setData}
+                errors={errors}
+                processing={processing}
+                handleSubmit={handleSubmit}
+            />
 
-                        <form onSubmit={handleSubmit} encType="multipart/form-data" className="p-6 space-y-5">
-                            <div>
-                                <label className="block text-xs font-bold text-slate-700 uppercase mb-2 tracking-wider">
-                                    Judul <span className="text-red-500">*</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    value={data.title}
-                                    onChange={(e) => setData("title", e.target.value)}
-                                    placeholder="Contoh: Panduan Pengguna Aplikasi Mobile"
-                                    className="w-full text-sm border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                    required
-                                />
-                                {errors.title && <p className="text-red-500 text-xs mt-2">{errors.title}</p>}
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-bold text-slate-700 uppercase mb-2 tracking-wider">
-                                    Deskripsi
-                                </label>
-                                <textarea
-                                    rows="2"
-                                    value={data.description}
-                                    onChange={(e) => setData("description", e.target.value)}
-                                    placeholder="Deskripsi singkat tentang isi manual book"
-                                    className="w-full text-sm border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                                />
-                                {errors.description && <p className="text-red-500 text-xs mt-2">{errors.description}</p>}
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-bold text-slate-700 uppercase mb-2 tracking-wider">
-                                    File (PDF) <span className="text-red-500">* maksimal 20MB</span>
-                                </label>
-                                <input
-                                    type="file"
-                                    accept=".pdf"
-                                    onChange={(e) => setData("file", e.target.files[0])}
-                                    className="w-full text-sm border border-slate-300 rounded-xl p-3 focus:ring-2 focus:ring-purple-500 focus:border-transparent file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
-                                    required={!editMode}
-                                />
-                                {errors.file && <p className="text-red-500 text-xs mt-2">{errors.file}</p>}
-                                {editMode && <p className="text-xs text-slate-400 mt-1">Kosongkan jika tidak ingin mengganti file.</p>}
-                            </div>
-
-                            <div className="flex items-center gap-3">
-                                <input
-                                    type="checkbox"
-                                    checked={data.is_active}
-                                    onChange={(e) => setData("is_active", e.target.checked)}
-                                    className="w-4 h-4 text-purple-600 rounded focus:ring-purple-500"
-                                />
-                                <label className="text-sm font-medium text-slate-700">Aktif (dapat diunduh oleh pengguna)</label>
-                            </div>
-
-                            <div className="pt-4 border-t border-slate-200 flex justify-end gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="px-5 py-2.5 text-sm font-medium text-slate-700 bg-slate-100 rounded-xl"
-                                >
-                                    Batal
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={processing}
-                                    className="px-5 py-2.5 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-xl shadow-md"
-                                >
-                                    {processing ? "Menyimpan..." : editMode ? "Perbarui" : "Upload"}
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            )}
-
-            {/* Modal Delete Confirmation */}
-            {isDeleteModalOpen && selectedManual && (
-                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-                    <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
-                        <div className="p-6 text-center">
-                            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <AlertTriangle size={32} className="text-red-600" />
-                            </div>
-                            <h3 className="text-lg font-bold text-slate-800 mb-2">Hapus <span className="text-green-700">{selectedManual.title}</span>?</h3>
-                            <p className="text-slate-500 text-sm mb-4">
-                                Menghapus <span className="font-semibold text-rose-700">"{selectedManual.title}"</span> akan menghapus file secara permanen.
-                            </p>
-                            <div className="flex justify-center gap-3">
-                                <button
-                                    onClick={() => setIsDeleteModalOpen(false)}
-                                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-medium"
-                                >
-                                    Batal
-                                </button>
-                                <button
-                                    onClick={handleDelete}
-                                    disabled={processing}
-                                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-medium shadow-md"
-                                >
-                                    {processing ? "Menghapus..." : "Ya, Hapus"}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <DeleteConfirmationModal
+                show={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                selectedManual={selectedManual}
+                processing={processing}
+                handleDelete={handleDelete}
+            />
         </AdminLayout>
     );
 }

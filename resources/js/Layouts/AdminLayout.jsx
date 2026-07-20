@@ -47,7 +47,7 @@ export default function AdminLayout({ children, header }) {
             active: route().current("admin.categories.*"),
         },
         {
-            name: "Master Jabatan",
+            name: "Master Forkopimda",
             href: route("admin.honorifics.index"),
             icon: Crown,
             active: route().current("admin.honorifics.*"),

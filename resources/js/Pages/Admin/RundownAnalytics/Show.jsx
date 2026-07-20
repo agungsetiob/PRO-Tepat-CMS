@@ -273,18 +273,18 @@ export default function Show({ rundown }) {
             <Modal
                 show={photoModalOpen}
                 onClose={closePhotoModal}
-                maxWidth="2xl"
+                maxWidth="3xl"
             >
-                <div className="p-6">
+                <div className="p-4 bg-black">
                     <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-bold text-slate-800">
+                        <h3 className="text-lg font-bold text-white">
                             Foto Kehadiran
                         </h3>
                         <button
                             onClick={closePhotoModal}
-                            className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
+                            className="p-1 hover:bg-slate-800 rounded-lg transition-colors"
                         >
-                            <X size={20} className="text-slate-500" />
+                            <X size={20} className="text-white" />
                         </button>
                     </div>
                     {selectedPhoto ? (
@@ -301,7 +301,7 @@ export default function Show({ rundown }) {
                             />
                         </div>
                     ) : (
-                        <div className="text-center py-8 text-slate-400">
+                        <div className="text-center py-8 text-white">
                             Tidak ada foto untuk ditampilkan.
                         </div>
                     )}

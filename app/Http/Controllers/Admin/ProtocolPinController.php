@@ -33,7 +33,7 @@ class ProtocolPinController extends Controller
             'is_active' => true
         ]);
 
-        return redirect()->back()->with('success', 'PIN Otorisasi Protokol baru berhasil diterbitkan.');
+        return redirect()->back()->with('message', 'PIN Otorisasi Protokol baru berhasil diterbitkan.');
     }
 
     public function update(Request $request, $id)
@@ -51,7 +51,7 @@ class ProtocolPinController extends Controller
             'is_active' => $request->has('is_active') ? $request->is_active : $pinModel->is_active
         ]);
 
-        return redirect()->back()->with('success', 'Data PIN berhasil diperbarui.');
+        return redirect()->back()->with('message', 'Data PIN berhasil diperbarui.');
     }
 
     public function destroy($id)
@@ -59,6 +59,6 @@ class ProtocolPinController extends Controller
         $pinModel = ProtocolPin::findOrFail($id);
         $pinModel->delete();
 
-        return redirect()->back()->with('success', 'PIN berhasil dihapus secara permanen dari server.');
+        return redirect()->back()->with('message', 'PIN berhasil dihapus secara permanen dari server.');
     }
 }
