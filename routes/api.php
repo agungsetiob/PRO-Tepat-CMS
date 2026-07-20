@@ -6,7 +6,7 @@ use App\Http\Controllers\Api\v1\RundownGeneratorController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')
-    ->middleware(['api.signature', 'throttle:99,1'])
+    ->middleware(['api.key', 'throttle:99,1'])
     ->group(function () {
         
         Route::get('/dashboard', [ProtocolApiController::class, 'getDashboard']);
@@ -27,7 +27,7 @@ Route::prefix('v1')
         Route::post('/rundowns', [RundownGeneratorController::class, 'store'])->middleware('api.pin');;
         Route::get('/generated-rundowns', [RundownGeneratorController::class, 'getRundownsList']);
         Route::get('/generated-rundowns/{id}', [RundownGeneratorController::class, 'getRundownDetail']);
-        Route::post('/invitations/{id}/presence', [RundownGeneratorController::class, 'updatePresence'])->middleware('api.pin');;
+        Route::post('/invitations/{id}/presence', [RundownGeneratorController::class, 'updatePresence'])->middleware('api.pin');
         Route::post('/rundowns/verify-pin', [RundownGeneratorController::class, 'verifyPin']);
 
         Route::get('manual-books', [ManualBookApiController::class, 'index']);
