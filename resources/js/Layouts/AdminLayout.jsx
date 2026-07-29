@@ -14,6 +14,7 @@ import {
     ClockCheck,
     FileText,
     Key,
+    ShieldAlert
 } from "lucide-react";
 
 export default function AdminLayout({ children, header }) {
@@ -69,6 +70,12 @@ export default function AdminLayout({ children, header }) {
             href: route("admin.protocol-pins.index"),
             icon: Key,
             active: route().current("admin.protocol-pins.*"),
+        },
+        {
+            name: "Privacy Policy",
+            href: route("admin.privacy-policy.index"),
+            icon: ShieldAlert,
+            active: route().current("admin.privacy-policy.index"),
         },
     ];
 
