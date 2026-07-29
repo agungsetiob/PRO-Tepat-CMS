@@ -316,18 +316,20 @@ export default function Login({ status, canResetPassword }) {
 
                                 {/* Security Badge */}
                                 <div className="mt-8 pt-6 border-t border-slate-200 text-center">
-                                    <div className="flex items-center justify-center gap-2 text-xs text-teal-500">
+                                    <div className="flex items-center justify-center gap-2 text-xs">
                                         <Shield
                                             size={14}
                                             className="text-teal-600"
                                         />
-                                        <span>
-                                            Secure Login • SSL Encrypted
-                                        </span>
+                                        <Link
+                                            href={route("privacy.policy")}
+                                            className="text-teal-600 hover:text-teal-700 font-semibold transition-colors underline decoration-teal-500/30 underline-offset-4"
+                                        >
+                                            Privacy Policy
+                                        </Link>
                                     </div>
                                     <p className="text-xs text-slate-400 mt-3">
-                                        © 2026 PROTAP Tanah Bumbu. All rights
-                                        reserved.
+                                        © 2026 PROTAP Tanah Bumbu. All rights reserved.
                                     </p>
                                 </div>
                             </div>

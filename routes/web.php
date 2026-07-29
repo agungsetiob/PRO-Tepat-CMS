@@ -8,7 +8,7 @@ use App\Http\Controllers\Admin\ManualBookController;
 use App\Http\Controllers\Admin\MasterAgendaController;
 use App\Http\Controllers\Admin\ProtocolPinController;
 use App\Http\Controllers\Admin\RundownAnalyticsController;
-use App\Http\Controllers\Admin\PrivacyPolicyCmsController;
+use App\Http\Controllers\Admin\PrivacyPolicyController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +20,8 @@ Route::get('/', function () {
     }
     return Inertia::render('Auth/Login');
 });
+
+Route::get('/privacy-policy', [PrivacyPolicyController::class, 'show'])->name('privacy.policy');
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
 
@@ -58,8 +60,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     Route::resource('protocol-pins', ProtocolPinController::class)->except(['create', 'edit', 'show']);
 
-    Route::get('/privacy-policy', [PrivacyPolicyCmsController::class, 'index'])->name('privacy-policy.index');
-    Route::post('/privacy-policy', [PrivacyPolicyCmsController::class, 'update'])->name('privacy-policy.update');
+    Route::get('/privacy-policy', [PrivacyPolicyController::class, 'index'])->name('privacy-policy.index');
+    Route::post('/privacy-policy', [PrivacyPolicyController::class, 'update'])->name('privacy-policy.update');
 });
 
 require __DIR__ . '/auth.php';

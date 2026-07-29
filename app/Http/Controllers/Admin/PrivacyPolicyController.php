@@ -7,11 +7,10 @@ use App\Models\PrivacyPolicy;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class PrivacyPolicyCmsController extends Controller
+class PrivacyPolicyController extends Controller
 {
     public function index()
     {
-        // Ambil data pertama, jika belum ada buat instance kosong
         $policy = PrivacyPolicy::first();
 
         return Inertia::render('Admin/PrivacyPolicy/Index', [
@@ -27,12 +26,21 @@ class PrivacyPolicyCmsController extends Controller
             'description.required' => 'Isi kebijakan privasi tidak boleh kosong.'
         ]);
 
-        // Gunakan updateOrCreate agar otomatis membuat data baru jika baris belum pernah ada
         PrivacyPolicy::updateOrCreate(
             ['id' => 1],
             ['description' => $request->description]
         );
 
         return redirect()->back()->with('success', 'Kebijakan Privasi Aplikasi berhasil diperbarui.');
+    }
+
+    public function show()
+    {
+        $policy = PrivacyPolicy::first();
+
+        return Inertia::render('PrivacyPolicy', [
+            'description' => $policy ? $policy->description : '<p>Kebijakan privasi belum dikonfigurasi oleh administrator.</p>',
+            'updated_at' => $policy ? $policy->updated_at->format('d M Y') : null,
+        ]);
     }
 }
