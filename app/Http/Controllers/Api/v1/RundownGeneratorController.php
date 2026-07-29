@@ -14,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use App\Models\PrivacyPolicy;
 
 class RundownGeneratorController extends Controller
 {
@@ -278,5 +279,28 @@ class RundownGeneratorController extends Controller
             'success' => false,
             'message' => 'PIN Protokol Salah atau Sudah Dinonaktifkan!'
         ], 401);
+    }
+
+    /**
+     * API Public untuk mengambil teks Kebijakan Privasi Aplikasi
+     */
+    public function getPrivacyPolicy(): JsonResponse
+    {
+        try {
+            $policy = PrivacyPolicy::first();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'description' => $policy ? $policy->description : '<p>Kebijakan Privasi belum dikonfigurasi.</p>',
+                    'updated_at' => $policy ? $policy->updated_at->format('d M Y, H:i') : null
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memuat privacy policy: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

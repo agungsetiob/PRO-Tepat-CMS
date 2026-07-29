@@ -33,4 +33,6 @@ Route::prefix('v1')
         Route::get('manual-books', [ManualBookApiController::class, 'index']);
         Route::get('manual-books/{id}', [ManualBookApiController::class, 'show']);
         Route::get('manual-books/{id}/download', [ManualBookApiController::class, 'download']);
+
+        Route::get('/privacy-policy', [RundownGeneratorController::class, 'getPrivacyPolicy']);
     });
