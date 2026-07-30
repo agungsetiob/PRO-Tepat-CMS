@@ -93,7 +93,7 @@ export default function PrivacyPolicy({ description, updated_at }) {
                     </div>
 
                     {/* Rich Text Container (Styling Disesuaikan secara Presisi) */}
-                    <div className="bg-slate-900/90 rounded-3xl p-6 sm:p-10 border border-slate-800 shadow-xl">
+                    <div className="bg-slate-900/90 rounded-3xl p-4 sm:p-10 border border-slate-800 shadow-xl">
                         <div
                             className="privacy-content text-slate-300 text-sm sm:text-base leading-relaxed"
                             dangerouslySetInnerHTML={{ __html: description }}
@@ -117,8 +117,9 @@ export default function PrivacyPolicy({ description, updated_at }) {
             <style>{`
                 /* 1. Mencegah Teks Keluar Batas / Overflow */
                 .privacy-content {
-                    word-break: break-word;
-                    overflow-wrap: anywhere;
+                    text-align: justify;
+                    text-justify: inter-word;
+                    overflow-wrap: break-word;
                     white-space: normal !important;
                 }
 

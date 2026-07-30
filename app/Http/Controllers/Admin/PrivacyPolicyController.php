@@ -31,7 +31,7 @@ class PrivacyPolicyController extends Controller
             ['description' => $request->description]
         );
 
-        return redirect()->back()->with('success', 'Kebijakan Privasi Aplikasi berhasil diperbarui.');
+        return redirect()->back()->with('message', 'Kebijakan Privasi Aplikasi berhasil diperbarui.');
     }
 
     public function show()

@@ -2,7 +2,7 @@ import React from "react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Head, useForm, usePage } from "@inertiajs/react";
 import ReactQuill from "react-quill-new";
-import "react-quill-new/dist/quill.snow.css"; // Style WYSIWYG bawaan Quill
+import "react-quill-new/dist/quill.snow.css";
 import { ShieldCheck, CheckCircle, Save } from "lucide-react";
 
 export default function Index({ policy }) {
@@ -17,7 +17,6 @@ export default function Index({ policy }) {
         post(route("admin.privacy-policy.update"));
     };
 
-    // Konfigurasi Toolbar WYSIWYG Editor Sederhana & Lengkap
     const modules = {
         toolbar: [
             [{ header: [1, 2, 3, false] }],
