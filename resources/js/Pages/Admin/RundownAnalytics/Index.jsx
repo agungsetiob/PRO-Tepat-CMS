@@ -67,7 +67,7 @@ export default function Index({ stats, rundowns }) {
             )}
 
             {/* GRID UTAMA STATS CARD */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 <div className="bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl shadow-md p-6 text-white">
                     <div className="flex items-center justify-between">
                         <div>
@@ -78,7 +78,6 @@ export default function Index({ stats, rundowns }) {
                             <FileSpreadsheet size={24} />
                         </div>
                     </div>
-                    <p className="text-xs text-teal-100/80 mt-4 font-medium">Akumulasi seluruh dokumen rundown yang dicetak via HP</p>
                 </div>
 
                 <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl shadow-md p-6 text-white">
@@ -91,7 +90,6 @@ export default function Index({ stats, rundowns }) {
                             <Calendar size={24} />
                         </div>
                     </div>
-                    <p className="text-xs text-indigo-100/80 mt-4 font-medium">Dokumen rundown baru yang digenerate bulan ini</p>
                 </div>
 
                 <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-md p-6 text-white">
@@ -100,14 +98,13 @@ export default function Index({ stats, rundowns }) {
                             <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-1">Status Keaktifan App</p>
                             <p className="text-xl font-black text-emerald-400 flex items-center gap-1.5 mt-2">
                                 <span className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-ping"></span>
-                                AKTIF & BERJALAN
+                                AKTIF
                             </p>
                         </div>
                         <div className="w-12 h-12 bg-slate-700 rounded-xl flex items-center justify-center">
                             <Clock size={24} className="text-teal-400" />
                         </div>
                     </div>
-                    <p className="text-xs text-slate-400 mt-5 font-medium">Menerima rekaman data live transaksi dari lapangan</p>
                 </div>
             </div>
 
