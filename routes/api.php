@@ -34,7 +34,7 @@ Route::prefix('v1')
 
         Route::get('/privacy-policy', [RundownGeneratorController::class, 'getPrivacyPolicy']);
 
-        Route::group(['middleware' => ['throttle:7,2']], function () {
+        Route::group(['middleware' => ['throttle:5,2']], function () {
             Route::post('/rundowns', [RundownGeneratorController::class, 'store']);
             Route::post('/rundowns/verify-pin', [RundownGeneratorController::class, 'verifyPin']);
         });
