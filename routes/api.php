@@ -11,7 +11,7 @@ Route::prefix('v1')
         
         Route::get('/dashboard', [ProtocolApiController::class, 'getDashboard']);
         
-        // Endpoint Pencarian Pintar (Contoh akses: /api/v1/search?q=bupati)
+        //(/api/v1/search?q=bupati)
         Route::get('/search', [ProtocolApiController::class, 'quickSearch']);
         Route::get('/search-honorifics', [ProtocolApiController::class, 'quickSearchHonorifics']);
 
@@ -24,15 +24,18 @@ Route::prefix('v1')
         Route::get('scenarios', [ProtocolApiController::class, 'index']);
 
         Route::get('/master-agendas', [RundownGeneratorController::class, 'getMasterAgendas']);
-        Route::post('/rundowns', [RundownGeneratorController::class, 'store'])->middleware('api.pin');;
         Route::get('/generated-rundowns', [RundownGeneratorController::class, 'getRundownsList']);
         Route::get('/generated-rundowns/{id}', [RundownGeneratorController::class, 'getRundownDetail']);
         Route::post('/invitations/{id}/presence', [RundownGeneratorController::class, 'updatePresence'])->middleware('api.pin');
-        Route::post('/rundowns/verify-pin', [RundownGeneratorController::class, 'verifyPin']);
 
         Route::get('manual-books', [ManualBookApiController::class, 'index']);
         Route::get('manual-books/{id}', [ManualBookApiController::class, 'show']);
         Route::get('manual-books/{id}/download', [ManualBookApiController::class, 'download']);
 
         Route::get('/privacy-policy', [RundownGeneratorController::class, 'getPrivacyPolicy']);
+
+        Route::group(['middleware' => ['throttle:7,2']], function () {
+            Route::post('/rundowns', [RundownGeneratorController::class, 'store']);
+            Route::post('/rundowns/verify-pin', [RundownGeneratorController::class, 'verifyPin']);
+        });
     });
