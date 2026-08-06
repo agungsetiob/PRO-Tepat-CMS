@@ -43,18 +43,18 @@ class RundownGeneratorController extends Controller
     }
 
     /**
-     * 2. Menyimpan susunan rundown baru yang dibuat oleh user dari handphone
+     * 2. Menyimpan susunan rundown baru yang dibuat oleh user dari mobile app
      */
     public function store(Request $request): JsonResponse
     {
         // Validasi input kiriman dari mobile
         $validator = Validator::make($request->all(), [
-            'event_name' => 'required|string|max:255',
+            'event_name' => 'required|string|min:10|max:255',
             'date' => 'required|date',
             'time_info' => 'required|string|max:100',
-            'location' => 'required|string|max:255',
-            'pic' => 'nullable|string|max:255',
-            'items' => 'required|array|min:1', // Harus ada minimal 1 baris susunan acara
+            'location' => 'required|string|min:10|max:255',
+            'pic' => 'nullable|string|min:9|max:255',
+            'items' => 'required|array|min:4',
             'items.*.master_agenda_id' => 'required|exists:master_agendas,id',
             'items.*.start_time' => 'required|string|max:5',
             'items.*.end_time' => 'required|string|max:5',
@@ -65,7 +65,7 @@ class RundownGeneratorController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validasi gagal',
+                'message' => 'Periksa data anda',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -73,7 +73,6 @@ class RundownGeneratorController extends Controller
         DB::beginTransaction();
 
         try {
-            // A. Simpan data induk rundown
             $rundown = GeneratedRundown::create([
                 'event_name' => $request->event_name,
                 'date' => $request->date,
@@ -82,7 +81,6 @@ class RundownGeneratorController extends Controller
                 'pic' => $request->pic,
             ]);
 
-            // B. Simpan baris-baris detail susunan acaranya
             foreach ($request->items as $index => $item) {
                 GeneratedRundownItem::create([
                     'generated_rundown_id' => $rundown->id,
@@ -120,12 +118,11 @@ class RundownGeneratorController extends Controller
     }
 
     /**
-     * 3. Menampilkan daftar riwayat rundown dengan pencarian dan cursor pagination (Load More)
+     * 3. Menampilkan daftar riwayat rundown dengan pencarian dan cursor pagination
      */
     public function getRundownsList(Request $request): JsonResponse
     {
         try {
-            // Inisialisasi query dasar beserta hitung relasi baris
             $query = GeneratedRundown::withCount(['items', 'invitations']);
 
             if ($request->has('search') && !empty($request->search)) {
@@ -155,7 +152,7 @@ class RundownGeneratorController extends Controller
     }
 
     /**
-     * 4. Menampilkan detail spesifik dari satu rundown (termasuk susunan acara dan list honorifics undangan)
+     * 4. Menampilkan detail spesifik dari satu rundown
      */
     public function getRundownDetail($id): JsonResponse
     {
@@ -206,16 +203,12 @@ class RundownGeneratorController extends Controller
 
             // Jika status hadir dan ada lampiran foto kamera dari protokol
             if ($request->status === 'hadir' && $request->hasFile('photo')) {
-                // Hapus foto lama jika ada ganti ulang
                 if ($invitation->presence_photo) {
                     Storage::disk('public')->delete($invitation->presence_photo);
                 }
-
-                // Simpan ke direktori storage/public/presence_photos
                 $path = $request->file('photo')->store('presence_photos', 'public');
                 $dataUpdate['presence_photo'] = $path;
             } elseif ($request->status === 'tidak_hadir' || $request->status === 'belum_hadir') {
-                // Hapus foto jika status dibatalkan/diubah ke tidak hadir
                 if ($invitation->presence_photo) {
                     Storage::disk('public')->delete($invitation->presence_photo);
                     $dataUpdate['presence_photo'] = null;
@@ -224,7 +217,6 @@ class RundownGeneratorController extends Controller
 
             $invitation->update($dataUpdate);
 
-            // Ambil data terbaru beserta master info honorific-nya
             $updatedData = GeneratedRundownInvitation::with('honorific')->find($invitationId);
 
             return response()->json([
@@ -248,7 +240,6 @@ class RundownGeneratorController extends Controller
 
         $throttleKey = 'verify-pin:' . $request->ip();
 
-        // 1. CEK LIMITER: Maksimal 5 kali percobaan salah
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
             return response()->json([
@@ -257,13 +248,11 @@ class RundownGeneratorController extends Controller
             ], 429);
         }
 
-        // 2. Cek apakah PIN terdaftar dan berstatus aktif di database
         $isValid = ProtocolPin::where('pin', $request->pin)
             ->where('is_active', true)
             ->exists();
 
         if ($isValid) {
-            // 3. JIKA SUKSES: Hapus riwayat kesalahan untuk IP ini
             RateLimiter::clear($throttleKey);
 
             return response()->json([
@@ -272,7 +261,6 @@ class RundownGeneratorController extends Controller
             ], 200);
         }
 
-        // 4. JIKA GAGAL: Catat percobaan salah ini
         RateLimiter::hit($throttleKey, 60);
 
         return response()->json([
