@@ -214,7 +214,7 @@ export default function Index({ scenarios, categories }) {
             )}
 
             {/* Stats Cards - tetap sama */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <div className="bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl shadow-lg p-5 text-white transform hover:scale-105 transition-transform duration-300">
                     <div className="flex items-center justify-between">
                         <div>

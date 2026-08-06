@@ -79,9 +79,9 @@ export default function AdminLayout({ children, header }) {
         },
     ];
 
-    // Toggle sidebar untuk mobile
+    // Toggle sidebar untuk mobile dan tablet (< 1024px)
     const toggleSidebar = () => {
-        if (window.innerWidth < 768) {
+        if (window.innerWidth < 1024) {
             setIsMobileMenuOpen(!isMobileMenuOpen);
         } else {
             setIsSidebarOpen(!isSidebarOpen);
@@ -90,11 +90,11 @@ export default function AdminLayout({ children, header }) {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 font-sans">
-            {/* Sidebar Desktop */}
+            {/* Sidebar Desktop (Hanya tampil di layar besar / lg) */}
             <aside
                 className={`fixed left-0 top-0 z-30 h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl transition-all duration-300 ease-in-out flex flex-col
                     ${isSidebarOpen ? "w-72" : "w-20"} 
-                    hidden md:flex`}
+                    hidden lg:flex`}
             >
                 {/* Logo Area */}
                 <div className={`p-5 border-b border-slate-700/50 bg-slate-900/50 backdrop-blur-sm transition-all duration-300 ${isSidebarOpen ? "px-6" : "px-4"}`}>
@@ -178,14 +178,14 @@ export default function AdminLayout({ children, header }) {
                 </div>
             </aside>
 
-            {/* Mobile Sidebar */}
+            {/* Mobile/Tablet Sidebar */}
             {isMobileMenuOpen && (
                 <>
                     <div
-                        className="fixed inset-0 bg-black/50 z-40 md:hidden"
+                        className="fixed inset-0 bg-black/50 z-40 lg:hidden"
                         onClick={() => setIsMobileMenuOpen(false)}
                     />
-                    <aside className="fixed left-0 top-0 z-50 h-screen w-72 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl md:hidden flex flex-col animate-slide-in">
+                    <aside className="fixed left-0 top-0 z-50 h-screen w-72 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl lg:hidden flex flex-col animate-slide-in">
                         <div className="p-5 border-b border-slate-700/50 flex justify-between items-center">
                             <img
                                 src="/beraksi-logo.webp"
@@ -249,7 +249,7 @@ export default function AdminLayout({ children, header }) {
             )}
 
             {/* Main Content */}
-            <div className={`transition-all duration-300 ${isSidebarOpen ? "md:ml-72" : "md:ml-20"}`}>
+            <div className={`transition-all duration-300 ${isSidebarOpen ? "lg:ml-72" : "lg:ml-20"}`}>
                 {/* Top Navbar */}
                 <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-md shadow-sm border-b border-slate-200">
                     <div className="h-16 flex items-center justify-between px-6">
